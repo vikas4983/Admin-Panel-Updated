@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin_auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\MobileLogin;
 use Illuminate\Http\Request;
 
 class MobileLoginController extends Controller
@@ -12,7 +13,7 @@ class MobileLoginController extends Controller
      */
     public function index()
     {
-        //
+        MobileLogin :: all();
     }
 
     /**
