@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: #081b31;
+            color: #fff;
+            height: 5rem;
+            line-height: 5rem;
+        }
+
+        .choice {
+            height: 165px;
+            width: 165px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .choice:hover {
+            cursor: pointer;
+            background-color: #081b31;
+        }
+
+        img {
+            height: 150px;
+            width: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            margin-top: 5rem;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-top: 3rem;
+            gap: 5rem;
+        }
+
+        #user-score,
+        #comp-score {
+            font-size: 4rem;
+        }
+
+        .msg-container {
+            margin-top: 5rem;
+        }
+
+        #msg {
+            background-color: #081b31;
+            color: #fff;
+            font-size: 2rem;
+            display: inline;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Rock Paper Scissors</h1>
+    <div class="choices">
+        <div class="choice" id="rock">
+            <img src="rock.png" alt="">
+        </div>
+        <div class="choice" id="paper">
+            <img src="paper.png" alt="">
+        </div>
+        <div class="choice" id="scissors">
+            <img src="scissors.png" alt="">
+        </div>
+    </div>
+
+    <div class="msg-container">
+        <p id="msg">winnar</p>
+    </div>
+    <script>
+
+        let choices = document.querySelectorAll(".choice");
+
+        const msgWinnar = (userWin) => {
+           
+           if (userWin === true) {
+                msg.innerText = "User Win!";
+                msg.style.backgroundColor = "green";
+            } else {
+
+                msg.innerText = "User Loss!";
+                msg.style.backgroundColor = "red";
+            }
+        }
+
+        const playGame = (userChoice) => {
+
+            const comChoice = genComChoice();
+
+            console.log("User Choice = ", userChoice, "\n", "Com Choice = ", comChoice);
+            if (userChoice === comChoice) {
+                console.log("Game was Drow");
+            } else {
+                let userWin = true;
+                if (userChoice === "rock") {
+                    const userWin = comChoice === "paper" ? false : true;
+                    console.log(userWin);
+                    msgWinnar(userWin);
+                }
+                else if (userChoice === "paper") {
+                    const userWin = comChoice === "scissors" ? false : true;
+                    console.log(userWin);
+                    msgWinnar(userWin);
+                } else {
+                    const userWin = comChoice === "rock" ? false : true;
+                    console.log(userWin);
+                    msgWinnar(userWin);
+                }
+        
+
+            }
+
+
+        }
+
+        const genComChoice = () => {
+            const options = ['rock', 'paper', 'scissors'];
+            const randIdx = Math.floor(Math.random() * 3);
+            return options[randIdx];
+        }
+
+
+
+        choices.forEach((choice) => {
+            choice.addEventListener("click", () => {
+                const userChoice = choice.getAttribute("id");
+                playGame(userChoice);
+            });
+        })
+
+
+
+    </script>
+</body>
+
+</html>

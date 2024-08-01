@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .content {
+        background-color: rgb(76, 46, 46);
+        color: rgb(243, 243, 243);
+
+    }
+
+    .newClass {
+        background-color: green;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            color: white;
+            border: 2px solid red;
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- <button onclick="alert('hello');">submit</button> -->
+    <button>submit</button>
+    <!-- <div onmousewheel="console.log('helli');">box</div> -->
+    <div>box</div>
+</body>
+<script>
+    //    let para = document.querySelector(".content");
+    //    para.setAttribute("class", "newClass");  // This is completely overwrite a class
+    //    para.classList.add("newClass");  // this is set both class property in any attributes
+    //    para.classList.remove("newClass");  // this is remove class property in any attributes
+
+    //    let btn =  document.querySelector("button");
+    //        btn.onclick(alert('hello'));
+    //    let btn2 =  document.querySelector("button");
+    //        btn.ondblclick(alert('hello'));
+
+    // let div = document.querySelector("div");
+    // div.onmouseover = () => {
+    //     console.log('hello button was clicked');
+    //     let a = prompt('Enter your age');
+    //     if (a > 18) {
+    //         console.log('you are eligble for vote');
+    //         let vote = prompt('which party to give vote ');
+    //         console.log('your vote goes to ' + vote);
+
+    //         } else {
+    //         console.log('you are not eliogbale for vote')
+    //     }
+    // }
+
+    //  let btn = document.querySelector("button");
+    //   let currmode = "light";
+    //      btn.addEventListener("click" ,() => {
+    //        if(currmode === "light"){
+    //         let darktheme= prompt("tell me your theme color");
+    //           //currmode="dark";
+    //           document.querySelector("body").style.backgroundColor = darktheme;
+    //        }else{
+    //          //currmode = "light";
+    //          let lighttheme = prompt("cjange theme color");
+    //        document.querySelector("body").style.backgroundColor= lighttheme;
+    //        }
+    //        console.log(currmode);
+    //      })
+
+
+    // let div = document.querySelector("div");
+    // let body = document.querySelector("body");
+
+    // div.addEventListener("mouseover", () => {
+    //     //let m = prompt("enter Color name when you mouse over");
+    //     body.style.backgroundColor = "red";
+    // });
+
+    // div.addEventListener("mouseleave", () => {
+    //     body.style.backgroundColor = "green";
+    // });
+
+    const employee = {
+        salary: 2500,
+        address: "Jbp",
+        salaryCal() {
+            console.log("tax rate is 10%");
+        }
+    }
+
+    const vipin = {
+        salary: 5000,
+        address: "Pune",
+        salaryCal1() {
+            console.log("tax rate is 20%");
+        }
+    }
+
+    vipin.__proto__ = employee;
+
+
+    class car {
+
+        start() {
+            console.log("start");
+        }
+
+        stop() {
+            console.log("stop");
+        }
+
+        setBrand(brand) {
+            this.brandName = brand;
+        }
+
+    }
+    let baleno = new car();
+    baleno.setBrand("Suzuki");
+    console.log(baleno);
+    let abc= new car();
+    console.log(baleno);
+
+
+
+
+
+
+</script>
+
+</html>
