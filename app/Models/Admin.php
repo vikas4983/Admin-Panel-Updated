@@ -25,3 +25,5 @@ class Admin extends Model implements AuthenticatableContract
         return $this->hasMany(MobileLogin::class, 'admin_id');
     }
 }
+
+// abc

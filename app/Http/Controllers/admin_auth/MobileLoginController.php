@@ -24,17 +24,14 @@ class MobileLoginController extends Controller
         $this->phoneNumberService = $phoneNumberService;
     }
 
-
-
-
-
     public function sendOtp(Request $request)
-    {
+    { 
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
         ]);
         $number = $validateRequest['mobile'];
-        $findadmin = Admin::where('mobile', $request->mobile)->first();
+        $findadmin = Admin::where('mobile', $number)->first();
+        //dump($findadmin);
         if (!$findadmin) {
             return back()->with('error', "Admin not found!");
         }
@@ -42,10 +39,7 @@ class MobileLoginController extends Controller
         
         try {
 
-            // $formattedNumber  = $this->phoneNumberService->formatPhoneNumber($number);
-            // dump($formattedNumber);
-            $response = $this->smsApiService->sendSms($findadmin);
-            dump($response);
+           
             $currentDateTime = Carbon::now()->addMinutes(5); // Set OTP expiry time to 5 minutes from now
             MobileLogin::create([
                 'admin_id' => $findadmin->id,
@@ -57,7 +51,10 @@ class MobileLoginController extends Controller
                 $query->latest('id')->first();
             }])->first();
 
-
+            // $formattedNumber  = $this->phoneNumberService->formatPhoneNumber($number);
+            // dump($formattedNumber);
+            $response = $this->smsApiService->sendSms($findadmin);
+            dump($response);
             return view('admin.admins.verify_otp', [
                 'admin' => $admin,
                 'success' => 'OTP has been sent successfully!'

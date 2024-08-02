@@ -19,7 +19,7 @@ class SmsApiService
           return redirect()->back()->with('error', "Sometning went wrong, please try again!");
         }
         // Get the most recent settings
-        $settings = SmsApi::where('template_id', 142112)->first();
+        $settings = SmsApi::where('template_id', 91722)->first();
         
         // Prepare the message with the OTP
         $messageTemplate = $settings->message; // Get template from DB
@@ -32,7 +32,7 @@ class SmsApiService
         // URL-encode the message
         $encodedMessage = urlencode($message);
 
-        dd($message);
+       // dd($message);
 
         // Construct the URL with encoded message
         $url = "https://www.bulksmsplans.com/api/send_sms?api_id={$settings->api_id}&api_password={$settings->api_password}&sms_type=Transactional&sms_encoding=text&sender={$settings->sender}&number={$number}&message={$message}&template_id={$settings->template_id}";

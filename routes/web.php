@@ -180,7 +180,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('paymentgateways', PaymentGatewayController::class);
 
 
-
+//abc
 
     // CMS Delete,Active,InActive  Route
     Route::post('cms-destroy', [CmsPageController::class, 'checkBoxDelete']);
