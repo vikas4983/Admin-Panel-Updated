@@ -3,64 +3,130 @@
 namespace App\Http\Controllers\admin_auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\MobileLogin;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MobileLoginController extends Controller
 {
+
+
+    public function sendOtp(Request $request)
+    {
+        $validateRequest = $request->validate([
+            'mobile' => ['required', 'digits:10'],
+        ]);
+        $findadmin = Admin::where('mobile', $request->mobile)->first();
+        if (!$findadmin) {
+            return back()->with('error', "Admin not found!");
+        }
+        $otp = rand(1000, 9999); // Generate a 4-digit OTP
+        $currentDateTime = Carbon::now()->addMinutes(5); // Set OTP expiry time to 5 minutes from now
+        MobileLogin::create([
+            'admin_id' => $findadmin->id,
+            'otp' => $otp,
+            'mobile' => $request->mobile,
+            'expires_at' => $currentDateTime
+        ]);
+        $admin = Admin::with(['otps' => function ($query) {
+            $query->latest('id')->first();
+        }])->first();
+
+
+       return view('admin.admins.verify_otp', [
+        'admin' => $admin,
+        'success' => 'OTP has been sent successfully!'
+    ]);
+    }
+
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile' => 'required|digits:10',
+            'otp' => 'required|digits:4',
+        ]);
+
+        $mobileLogin = MobileLogin::where('mobile', $request->mobile)
+            ->where('otp', $request->otp)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$mobileLogin) {
+            $admin = Admin::with(['otps' => function ($query) {
+                $query->latest('id')->first();
+            }])->first();
+            //return redirect('admin-login')->with('error', 'Invalid OTP or OTP expired');
+            return view('admin.admins.verify_otp',[
+                'admin' => $admin,
+                'error' => 'Invalid OTP or OTP expired']);
+        }
+
+        $admin = Admin::where('mobile', $request->mobile)->first();
+        Auth::guard('admin')->login($admin);
+
+        return redirect('admin/dashboard')->with('success', 'Logged in successfully');
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        MobileLogin :: all();
-    }
+    // public function index()
+    // {
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    // }
+    // public function index()
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    // {
+    // }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for creating a new resource.
+    //  */
+    // public function create()
+    // {
+    //     //
+    // }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
+    // public function store(Request $request)
+    // {
+    //     //
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    // /**
+    //  * Display the specified resource.
+    //  */
+    // public function show(string $id)
+    // {
+    //     //
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  */
+    // public function edit(string $id)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
+    // public function update(Request $request, string $id)
+    // {
+    //     //
+    // }
+
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
+    // public function destroy(string $id)
+    // {
+    //     //
+    // }
 }

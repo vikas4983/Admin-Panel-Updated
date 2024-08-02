@@ -108,7 +108,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="form-group col-md-12 mb-4">
-                                        
+
                                         <input type="email" name="email" value="{{ old('email') }}"
                                             class="form-control input-lg" id="email" aria-describedby="emailHelp"
                                             placeholder="email">
@@ -171,16 +171,22 @@
                         style="position: absolute; right: 1rem;">
                         <span aria-hidden="true">×</span>
                     </button>
-                </div>
+                </div>@if (isset($success))
+                                <div class="alert alert-success mt-3">
+                                    {{ $success }}
+                                </div>
+                            @endif
                 <div class="modal-body">
                     <form action="{{ url('send-otp') }}" method="post" id="otp-form">
                         @csrf
                         <div class="row">
                             <div class="form-group col-md-12 mb-4">
                                 <label for="mobile-email">Mobile No. / Email ID</label>
-                                <input type="text" name="mobile" value="{{ old('mobile') }}"
+                                <input type="text" id="otp-input" name="mobile" value="{{ old('mobile') }}"
                                     class="form-control col-lg-12" id="mobile" aria-describedby="mobileHelp"
                                     placeholder="Enter Mobile Number Or Email">
+                                <span id="error-message" style="color: red; display: none;">Valid number must be 10
+                                    characters or less.</span>
                                 @error('mobile')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -190,8 +196,22 @@
                             </div>
                         </div>
                     </form>
+                    <script>
+                        document.getElementById("otp-form").addEventListener('submit', function(e) {
+                            e.preventDefault(); // Prevent the default form submission
 
-                  
+                            var otpInput = document.getElementById("otp-input").value;
+                            var errorMessage = document.getElementById("error-message");
+
+                            if (otpInput.length > 10) {
+                                errorMessage.style.display = 'inline';
+                            } else {
+                                errorMessage.style.display = 'none';
+                                this.submit(); // Submit the form if validation passes
+                            }
+                        });
+                    </script>
+
 
                     @if (session('status'))
                         <p>{{ session('status') }}</p>

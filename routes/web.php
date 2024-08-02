@@ -126,10 +126,11 @@ Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
     // Login With OTP
-    Route::middleware(['CheckOTPSession'])->group(function () {
-        Route::get('verify-otp-form', function () {
-            return view('admin.admins.verify_otp');
-        });
+    // Route::middleware(['CheckOTPSession'])->group(function () {
+       
+    //     });
+    Route::get('verify-otp-form', function () {
+        return view('admin.admins.verify_otp');  
     });
     Route::view('mobile-login', 'mobile-login');
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);

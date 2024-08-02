@@ -20,4 +20,8 @@ class Admin extends Model implements AuthenticatableContract
     {
         return $value == 1 ? 'Admin' : 'Sub-Admin';
     }
+
+    public function otps(){
+        return $this->hasMany(MobileLogin::class, 'admin_id');
+    }
 }

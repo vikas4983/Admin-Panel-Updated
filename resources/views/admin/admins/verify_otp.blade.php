@@ -96,10 +96,11 @@
                             </div> --}}
 
                         </div>
-                       @dd($admin)
+                       
                         <div class="card-body  px-5 pb-5 pt-0">
                             <h1 class="text-dark mb-6 text-center" style="color:red"></h1>
-                            @if ($errors->any())
+                            {{-- Display Session Message --}}
+                            {{-- @if ($errors->any())
                                 <div>
                                     <ul>
                                         @foreach ($errors->all() as $error)
@@ -111,7 +112,7 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            @endif
+                            @endif --}}
                             @php
                                 if (!function_exists('obfuscateEmailInline')) {
                                     function obfuscateEmailInline($email)
@@ -137,42 +138,45 @@ if (!function_exists('obfuscateMobileInline')) {
                                     }
                                 }
                             @endphp
-
-                            @if (session('mobileLogin') && session('admin'))
-                                @php
-                                    $mobileLogin = session('mobileLogin');
-                                    $admin = session('admin');
-
-                                @endphp
-
-                                <div class="text-center">
-                                    <p>OTP has been sent to</p>
-                                    <p>+91{{ obfuscateMobileInline($mobileLogin->mobile ?? '') }}</p>
-                                    <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
-                                </div>
-                            @else
-                                {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to
+                             {{-- Display Bostrap Message --}}
+                        @if (isset($success))
+                            <div class="alert alert-success mt-1">
+                                {{ $success }}
+                            </div>
+                        @endif
+                        @if (isset($error))
+                            <div class="alert alert-danger mt-1">
+                                {{ $error }}
+                            </div>
+                        @endif
+                            <div class="text-center">
+                              
+                                <p>OTP has been sent to</p>
+                                <p>+91{{ obfuscateMobileInline($admin->mobile ?? '') }}</p>
+                                <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
+                             
+                            </div>
+                            {{-- @else --}}
+                            {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to
                                         login</a> and try again.</p> --}}
-                            @endif
+                            {{-- @endif --}}
                             <form action="{{ url('verify-otp') }}" method="post">
                                 @csrf
-
-                                <div class="row d-flex justify-content-center">
-                                    <div class="form-group col-md-8 mb-4 ">
+                                <div class="row d-flex justify-content-center mt-1">
+                                    <div class="form-group col-lg-8 ">
                                         <div class="text-center mt-3">
                                             <label for="otp">Enter OTP</label>
                                         </div>
+
                                         <input type="text" name="otp" id="otp"
                                             class="form-control input-lg" aria-describedby="emailHelp"
                                             placeholder="Enter OTP" value="{{ old('otp') }}"
-                                            style="text-align: center" >
-                                        <p class="error-feedback" style="color: red">You have just one attempt to enter the correct OTP.</p>
-
+                                            style="text-align: center" maxlength="4" pattern="\d{4}" required>
+                                        {{-- <p class="error-feedback" style="color: red">One attempt to enter
+                                            the correct OTP.</p> --}}
                                         <input type="hidden" name="mobile" id="mobile"
                                             value="{{ $admin->mobile ?? '' }}">
-                                        {{-- @error('mobile')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror --}}
+
                                     </div>
 
                                     <div class="col-md-12">
@@ -181,20 +185,6 @@ if (!function_exists('obfuscateMobileInline')) {
                                             <button type="submit" class="btn btn-primary btn-pill">Verify
                                                 OTP</button>
                                         </div>
-                                      
-                                        {{-- <div class="d-flex justify-content-center">
-                                           <form id="resend-otp" action="{{url('resend-otp')}}" method="post">
-                                            <input type="hidden" name="mobile" id="mobile" value="{{$admin->mobile ?? ''}}">
-                                            <input type="hidden" name="otp" id="otp" value="{{$admin->otp ?? ''}}">
-                        
-                                            @csrf
-                                            
-                                             <button type="submit"
-                                                class="mb-1 btn btn-outline-primary btn-pill btn-sm">Resend
-                                                OTP</button>
-                                           </form>
-
-                                        </div> --}}
                                         <p class="mt-3">Don't have an account yet ?
                                             <a class="text-blue" href="{{ url('admin-create') }}">Sign Up</a>
                                         </p>
