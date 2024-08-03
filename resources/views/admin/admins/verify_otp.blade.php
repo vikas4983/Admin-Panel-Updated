@@ -96,7 +96,7 @@
                             </div> --}}
 
                         </div>
-                       
+
                         <div class="card-body  px-5 pb-5 pt-0">
                             <h1 class="text-dark mb-6 text-center" style="color:red"></h1>
                             {{-- Display Session Message --}}
@@ -113,7 +113,7 @@
                                     </ul>
                                 </div>
                             @endif --}}
-                            {{-- abc --}}
+                            {{-- abc s --}}
                             @php
                                 if (!function_exists('obfuscateEmailInline')) {
                                     function obfuscateEmailInline($email)
@@ -139,23 +139,23 @@ if (!function_exists('obfuscateMobileInline')) {
                                     }
                                 }
                             @endphp
-                             {{-- Display Bostrap Message --}}
-                        @if (isset($success))
-                            <div class="alert alert-success mt-1">
-                                {{ $success }}
-                            </div>
-                        @endif
-                        @if (isset($error))
-                            <div class="alert alert-danger mt-1">
-                                {{ $error }}
-                            </div>
-                        @endif
+                            {{-- Display Bostrap Message --}}
+                            @if (isset($success))
+                                <div class="alert alert-success mt-1">
+                                    {{ $success }}
+                                </div>
+                            @endif
+                            @if (isset($error))
+                                <div class="alert alert-danger mt-1">
+                                    {{ $error }}
+                                </div>
+                            @endif
                             <div class="text-center">
-                              
+
                                 <p>OTP has been sent to</p>
                                 <p>+91{{ obfuscateMobileInline($admin->mobile ?? '') }}</p>
                                 <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
-                             
+
                             </div>
                             {{-- @else --}}
                             {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to

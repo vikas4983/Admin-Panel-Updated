@@ -171,12 +171,13 @@
                         style="position: absolute; right: 1rem;">
                         <span aria-hidden="true">×</span>
                     </button>
-                </div>@if (isset($success))
-                                <div class="alert alert-success mt-3">
-                                    {{ $success }}
-                                </div>
-                            @endif
-                            {{-- abc --}}
+                </div>
+                @if (isset($success))
+                    <div class="alert alert-success mt-3">
+                        {{ $success }}
+                    </div>
+                @endif
+                {{-- abc d --}}
                 <div class="modal-body">
                     <form action="{{ url('send-otp') }}" method="post" id="otp-form">
                         @csrf

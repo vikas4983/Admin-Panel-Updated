@@ -10,7 +10,7 @@ use Illuminate\Auth\Authenticatable;
 class Admin extends Model implements AuthenticatableContract
 {
     use HasFactory, Authenticatable;
-    public $fillable = ['name', 'email', 'mobile','password','status','roll','image'];
+    public $fillable = ['name', 'email', 'mobile', 'password', 'status', 'roll', 'image'];
 
     function getStatusAttribute($value)
     {
@@ -21,9 +21,10 @@ class Admin extends Model implements AuthenticatableContract
         return $value == 1 ? 'Admin' : 'Sub-Admin';
     }
 
-    public function otps(){
+    public function otps()
+    {
         return $this->hasMany(MobileLogin::class, 'admin_id');
     }
 }
 
-// abc
+// abcs

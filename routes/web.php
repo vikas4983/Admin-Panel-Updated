@@ -127,10 +127,10 @@ Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-create', 'admin-create')->name('admin-create');
     // Login With OTP
     // Route::middleware(['CheckOTPSession'])->group(function () {
-       
+
     //     });
     Route::get('verify-otp-form', function () {
-        return view('admin.admins.verify_otp');  
+        return view('admin.admins.verify_otp');
     });
     Route::view('mobile-login', 'mobile-login');
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
@@ -180,7 +180,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('paymentgateways', PaymentGatewayController::class);
 
 
-//abc
+    //ab
 
     // CMS Delete,Active,InActive  Route
     Route::post('cms-destroy', [CmsPageController::class, 'checkBoxDelete']);
