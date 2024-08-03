@@ -48,7 +48,7 @@ class MobileLoginController extends Controller
             // $formattedNumber  = $this->phoneNumberService->formatPhoneNumber($number);
             // dump($formattedNumber);
             $response = $this->smsApiService->sendSms($findadmin);
-            dump($response);
+            //dump($response);
             return view('admin.admins.verify_otp', [
                 'admin' => $admin,
                 'success' => 'OTP has been sent successfully!'
