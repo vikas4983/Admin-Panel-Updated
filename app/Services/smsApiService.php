@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Http;
 
 class SmsApiService
 {
-    public function sendSms($findadmin)
+    public function sendSms($admin)
     {
-        if ($findadmin) {
-            $name = $findadmin->name;
-            $number = $findadmin->mobile;
-            $otp = $findadmin->otps->last()->otp;
-            $DateTIme = $findadmin->otps->last()->expires_at;
+        if ($admin) {
+            $name = $admin->name;
+            $number = $admin->mobile;
+            $otp = $admin->otps->last()->otp;
+            $DateTIme = $admin->otps->last()->expires_at;
             //dump($name, $number, $otp, $DateTIme);
         } else {
             return redirect()->back()->with('error', "Something went wrong, please try again!");

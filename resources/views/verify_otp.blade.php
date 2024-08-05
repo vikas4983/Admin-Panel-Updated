@@ -96,8 +96,9 @@
                             </div> --}}
 
                         </div>
-                       
-                     {{-- @dd(session()->has('findadmin') , Auth::guard('admin')->user()) --}}
+                      
+                     
+                     {{-- @dd(session()->has('mobile') ) --}}
                         <div class="card-body  px-5 pb-5 pt-0">
                             <h1 class="text-dark mb-6 text-center" style="color:red"></h1>
                             {{-- Display Session Message --}}
@@ -170,7 +171,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                         <div class="text-center mt-3">
                                             <label for="otp">Enter OTP</label>
                                         </div>
-
+                      
                                         <input type="text" name="otp" id="otp"
                                             class="form-control input-lg" aria-describedby="emailHelp"
                                             placeholder="Enter OTP" value="{{ old('otp') }}"

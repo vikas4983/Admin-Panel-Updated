@@ -92,6 +92,8 @@ use Aws\Middleware;
 // });
 
 Route::get('abc', function () {
+    session()->flush();
+    session()->regenerateToken();
     Auth::guard('admin')->logout();
     return view('admin-login');
 });
@@ -114,14 +116,15 @@ Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
     // Login With OTP
-    // Route::middleware(['CheckOTPSession'])->group(function () {
+    //  Route::middleware(['CheckOTPSession'])->group(function () {
+       
+    // });
 
-    //     });
-    Route::get('verify-otp-form', function () {
-        return view('admin.admins.verify_otp');
-    });
-    Route::view('mobile-login', 'mobile-login');
+    //Route::view('mobile-login', 'mobile-login');
+
+    Route::get('admin-login',[MobileLoginController::class, 'mobilelogin']);
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
+    Route::get('verify-otp-form', [MobileLoginController::class ,'showform']);
     Route::post('resend-otp', [MobileLoginController::class, 'resendotp']);
 });
 // Validate with Email & Password
@@ -168,12 +171,12 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('paymentgateways', PaymentGatewayController::class);
 
 
-// CMS Delete,Active,InActive  Route
+    // CMS Delete,Active,InActive  Route
     Route::post('cms-destroy', [CmsPageController::class, 'checkBoxDelete']);
     Route::post('cms-active', [CmsPageController::class, 'activeItem']);
     Route::post('cms-inActive', [CmsPageController::class, 'inActiveItem']);
 
- //  User Active InActive Delete Route
+    //  User Active InActive Delete Route
     // Route::post('admin-destroy', [UserController::class, 'checkBoxDelete']);
     // Route::post('admin-active', [UserController::class, 'activeItem']);
     // Route::post('admin-inActive', [UserController::class, 'inActiveItem']);
