@@ -16,13 +16,11 @@ class CheckOTPSession
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Session::has('number')) {
-           
-            return redirect()->route('admin-login')->with('error', 'Something went wrong, please try again!');
+        if (session()->has('otp_sent')) {
+            session()->forget('otp_sent');
+            return redirect('admin-login')
+                ->with('error', 'Something went wrong. Please try again in two minutes.');
         }
-
-
-
         return $next($request);
     }
 }

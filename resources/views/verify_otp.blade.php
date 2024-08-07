@@ -96,9 +96,9 @@
                             </div> --}}
 
                         </div>
-                      
-                     
-                     {{-- @dd(session()->has('mobile') ) --}}
+
+
+                        {{-- @dd(session()->has('mobile') ) --}}
                         <div class="card-body  px-5 pb-5 pt-0">
                             <h1 class="text-dark mb-6 text-center" style="color:red"></h1>
                             {{-- Display Session Message --}}
@@ -116,7 +116,7 @@
                                 </div>
                             @endif --}}
                             {{-- abc s --}}
-                           
+
                             @php
                                 if (!function_exists('obfuscateEmailInline')) {
                                     function obfuscateEmailInline($email)
@@ -160,6 +160,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                 <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
 
                             </div>
+
                             {{-- @else --}}
                             {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to
                                         login</a> and try again.</p> --}}
@@ -171,7 +172,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                         <div class="text-center mt-3">
                                             <label for="otp">Enter OTP</label>
                                         </div>
-                      
+
                                         <input type="text" name="otp" id="otp"
                                             class="form-control input-lg" aria-describedby="emailHelp"
                                             placeholder="Enter OTP" value="{{ old('otp') }}"
@@ -180,6 +181,42 @@ if (!function_exists('obfuscateMobileInline')) {
                                             the correct OTP.</p> --}}
                                         <input type="hidden" name="mobile" id="mobile"
                                             value="{{ $admin->mobile ?? '' }}">
+                                        <form id="resend-otp-form" action="{{ url('resend-otp') }}" method="POST">
+                                            @csrf
+                                            <button type="submit" id="resend-otp" disabled>Resend OTP</button>
+                                        </form>
+
+                                        <p id="timer"></p>
+                                        <script>
+                                            var countdown = 60;
+                                            var timer = setInterval(() => {
+                                                countdown--;
+                                                document.getElementById('timer').innerText = "Please wait ${countdown} second to";
+                                                if (countdown <= 0) {
+                                                    clearInterval(timer);
+                                                    document.getElementById('resend-otp').disabled = false;
+                                                    document.getElementById('timer').innerText = '';
+                                                }
+                                            }, 1000);
+
+                                            function resendOtp() {
+                                                fetch('{{ url('resend-otp') }}',
+                                                    method: 'post',
+                                                    header: {
+                                                        'content-Type:' = 'application/json',
+                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                    }
+                                                )
+                                            }.then(response => response.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        alert('OTP resent successfully.');
+                                                        location.reload();
+                                                    } else {
+                                                        alert('Error: ' + data.error);
+                                                    }
+                                                })
+                                        </script>
 
                                     </div>
 

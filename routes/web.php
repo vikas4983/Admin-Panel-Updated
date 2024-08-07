@@ -115,14 +115,15 @@ Route::get('env-test', function () {
 Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
+   
     // Login With OTP
-    //  Route::middleware(['CheckOTPSession'])->group(function () {
-       
-    // });
+      Route::middleware(['CheckOTPSession'])->group(function () {
+      Route::get('admin-login', [MobileLoginController::class, 'mobilelogin']);
+     });
 
-    //Route::view('mobile-login', 'mobile-login');
+    Route::post('resend-otp', [MobileLoginController::class, 'sendOtp']);
 
-    Route::get('admin-login',[MobileLoginController::class, 'mobilelogin']);
+   // Route::get('admin-login',[MobileLoginController::class, 'mobilelogin']);
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
     Route::get('verify-otp-form', [MobileLoginController::class ,'showform']);
     Route::post('resend-otp', [MobileLoginController::class, 'resendotp']);
