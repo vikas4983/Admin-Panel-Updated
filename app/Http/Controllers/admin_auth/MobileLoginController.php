@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\smsApiService;
 use App\Services\TwilioSmsService;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class MobileLoginController extends Controller
@@ -24,49 +26,34 @@ class MobileLoginController extends Controller
         $this->phoneNumberService = $phoneNumberService;
         $this->TwilioSmsService = $TwilioSmsService;
     }
-
-
-    public function mobilelogin()
-    {
-        session()->has('otp_sent');
-        session()->forget('otp_sent');
-        return view('admin-login')->with('error', "Something went wrong please try again latter");
-    }
     public function showform()
-    {   
-        // $alert= 'alert';
-       
-       // return view('verify_otp')->with('error', 'Please wait before requesting a new OTP.');
-        return view('verify_otp',compact('alert'));
+    {
+        return view('verify_otp');
     }
 
     public function sendOtp(Request $request)
     {
-
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
         ]);
         $number = $validateRequest['mobile'];
-        $findadmin = Admin::where('mobile', $number)->first();
-        if (!$findadmin) {
-            return back()->with('error', "Admin not found!");
+        $admin = Admin::where('mobile', $number)->first();
+
+        if (!$admin) {
+            // dd('Vikas');
+            return redirect('admin-login')->with('error', " Admin not found!");
         }
         $otp = rand(1000, 9999);
-        $latestOTP = MobileLogin::where('admin_id', $findadmin->id)->latest('id')->first();
-        $currentDateTime = Carbon::now();
-        if ($latestOTP) {
-            $createdOTPTime = $latestOTP->expires_at;
-
-            if ($createdOTPTime > $currentDateTime) {
-              session()->put('otp_sent', true);
-              return redirect('admin-login')->with('error', "Please login agin!"); // Redirect to login page
-               // return view('verify_otp', compact('alert')); // Redirect to login page
-            }
+        $latestOTP = MobileLogin::where('admin_id', $admin->id)->latest('id')->first();
+        session(['latestOTP' => $latestOTP]);
+        if (Session::has('latestOTP')) {
+            $latestOTP->delete();
+            return redirect('admin-login');
         }
         try {
             $currentDateTime = Carbon::now()->addMinutes(1);
             MobileLogin::create([
-                'admin_id' => $findadmin->id,
+                'admin_id' => $admin->id,
                 'otp' => $otp,
                 'mobile' => $request->mobile,
                 'expires_at' => $currentDateTime
@@ -74,75 +61,51 @@ class MobileLoginController extends Controller
             // $admin = Admin::with(['otps' => function ($query) {
             //     $query->latest('id')->first();
             // }])->first();
-            $this->smsApiService->sendSms($findadmin); // BulkSmsPlansApi
-            $this->TwilioSmsService->sendSms($findadmin); // Twilio Api
+            $this->smsApiService->sendSms($admin); // BulkSmsPlansApi
+            $this->TwilioSmsService->sendSms($admin); // Twilio Api
 
             return view('verify_otp', [
                 'admin' =>
-                $findadmin,
+                $admin,
                 'success' => 'OTP has been sent successfully!'
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+    public function resendOtp(Request $request)
+    {
+        $validateRequest = $request->validate([
+            'mobile' => ['required', 'digits:10'],
+        ]);
+        $mobile = $validateRequest['mobile'];
+        try {
 
+            $admin = Admin::where('mobile', $mobile)->first();
+            if (!$admin) {
+                return response()->json(['success' => false, 'error' => 'Admin not found!'], 404);
+            }
+            $otp = rand(1000, 9999);
+            $currentDateTime = Carbon::now()->addMinutes(1);
+            MobileLogin::where('admin_id', $admin->id)->delete();
+            MobileLogin::create([
+                'admin_id' => $admin->id,
+                'otp' => $otp,
+                'mobile' => $mobile,
+                'expires_at' => $currentDateTime
+            ]);
+            $this->smsApiService->sendSms($admin); // Using BulkSmsPlans API
+            $this->TwilioSmsService->sendSms($admin); // Using Twilio API
+            return response()->json(['success' => true, 'message' => 'Resend OTP sent successfully!']);
+        } catch (\Exception $e) {
 
-
-    // public function resendOtp(Request $request)
-    // {
-    //     $admin = Auth::guard('admin')->user();
-    //     // Check if there's an existing OTP for the user
-    //     $latestOTP = MobileLogin::where('admin_id', $admin->id)->latest('id')->first();
-
-    //     // Get the current time
-    //     $currentDateTime = Carbon::now();
-
-    //     // Check if the OTP was sent less than 1 minute ago
-    //     if ($latestOTP) {
-    //         $createdOTPTime = $latestOTP->expires_at;
-
-    //         if ($createdOTPTime > $currentDateTime) {
-    //             session()->put('otp_sent', true);
-               
-    //             return redirect('admin-login')->with('error', "Please login agin!"); // Redirect to login page
-               
-    //         }
-    //     }
-
-    //     try {
-    //         $otp = rand(1000, 9999);
-    //         $currentDateTime = Carbon::now()->addMinutes(1);
-    //         MobileLogin::create([
-    //             'admin_id' => $admin->id,
-    //             'otp' => $otp,
-    //             'mobile' => $admin->mobile,
-    //             'expires_at' => $currentDateTime
-    //         ]);
-    //         // $admin = Admin::with(['otps' => function ($query) {
-    //         //     $query->latest('id')->first();
-    //         // }])->first();
-    //         $this->smsApiService->sendSms($admin); // BulkSmsPlansApi
-    //         $this->TwilioSmsService->sendSms($admin); // Twilio Api
-
-    //         return view('verify_otp', [
-    //             'admin' =>
-    //             $admin,
-    //             'success' => 'OTP has been sent successfully!'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-    //     }
-    // }
-
-
-
-
-
-
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
     public function verifyOtp(Request $request)
     {
         //dd($request->all());
+
         $request->validate([
             'mobile' => 'required|digits:10',
             'otp' => 'required|digits:4',
@@ -151,27 +114,82 @@ class MobileLoginController extends Controller
             ->where('otp', $request->otp)
             ->where('expires_at', '>', now())
             ->first();
-
         if (!$mobileLogin) {
             $admin = Admin::with(['otps' => function ($query) {
                 $query->latest('id')->first();
             }])->first();
-        
             return view('verify_otp', [
                 'admin' => $admin,
-                'error' => 'Invalid OTP or OTP expired'
+                'error' => 'Incorrect OTP or OTP expired'
             ]);
         }
-
         $admin = Admin::where('mobile', $request->mobile)->first();
         Auth::guard('admin')->login($admin);
-        // Clear OTP sent session variable
+        $mobileLogin->delete();
         session()->forget('otp_sent');
         return redirect('admin/dashboard')->with('success', 'Logged in successfully');
     }
 
+    // public function forgotpassword(Request $request)
+    // { 
+       
+    //     $validatedata = $request->validate([
+    //         'mobile' => ['required', 'max:10']
+    //     ]);
+    //     $admin = Admin::where('mobile', $validatedata['mobile'])->first();
+    //     if (!$admin) {
+    //         return redirect('admin-login')->with('error', " Admin not found!");
+    //     }
+    //     $otp = rand(1000, 9999);
+    //     $latestOTP = MobileLogin::where('admin_id', $admin->id)->latest('id')->first();
+    //     session(['latestOTP' => $latestOTP]);
+    //     if (Session::has('latestOTP')) {
+    //         $latestOTP->delete();
+    //         return redirect('admin-login');
+    //     }
+       
+    //         $currentDateTime = Carbon::now()->addMinutes(1);
+    //         MobileLogin::create([
+    //             'admin_id' => $admin->id,
+    //             'otp' => $otp,
+    //             'mobile' => $request->mobile,
+    //             'expires_at' => $currentDateTime
+    //         ]);
+    //         $this->smsApiService->sendSms($admin); // BulkSmsPlansApi
+    //         $this->TwilioSmsService->sendSms($admin); // Twilio Api
+           
+    //         $validateRequest = MobileLogin::where('mobile', $request->mobile)
+    //             ->where('otp', $otp)
+    //             ->where('expires_at', '>', now())
+    //             ->first();
+      
+    //         if (!$validateRequest) {
+    //             $admin = Admin::with(['otps' => function ($query) {
+    //                 $query->latest('id')->first();
+    //             }])->first();
+    //             return view('verify_otp', [
+    //                 'admin' => $admin,
+    //                 'error' => 'Incorrect OTP or OTP expired'
+    //             ]);
+    //         }
+            
+    //         //session()->forget('latestOTP');
+    //         return redirect('admin-forgot-password');
+           
+    // }
+
+    //     public function updatepasswordform(Request $request)
+    //  {
+    //    return view('admin-forgot-password-form')->with('success', 'Verified, now you can change password!');
+    //  }
+    //     public function updatepassword(Request $request)
+    //  {
+    //     dd($request->dd());
+
+    //  }
 
 
+     
 
 
 

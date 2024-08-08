@@ -16,10 +16,11 @@ class CheckOTPSession
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (session()->has('otp_sent')) {
-            session()->forget('otp_sent');
+        if (session()->has('latestOTP')) {
+           // dd('Vikas');
+            session()->forget('latestOTP');
             return redirect('admin-login')
-                ->with('error', 'Something went wrong. Please try again in two minutes.');
+                 ->with('error', 'An error occurred, try again!');
         }
         return $next($request);
     }

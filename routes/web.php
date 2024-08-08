@@ -112,21 +112,22 @@ Route::get('env-test', function () {
 });
 
 // Admin Login with email & Password
-Route::middleware('admin.redirect')->group(function () {
+    Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
    
     // Login With OTP
       Route::middleware(['CheckOTPSession'])->group(function () {
-      Route::get('admin-login', [MobileLoginController::class, 'mobilelogin']);
+      Route::view('admin-login', 'admin-login' );
      });
-
-    Route::post('resend-otp', [MobileLoginController::class, 'sendOtp']);
-
-   // Route::get('admin-login',[MobileLoginController::class, 'mobilelogin']);
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
+    Route::post('resend-otp', [MobileLoginController::class, 'resendOtp']);
     Route::get('verify-otp-form', [MobileLoginController::class ,'showform']);
-    Route::post('resend-otp', [MobileLoginController::class, 'resendotp']);
+    Route::post('forgot-password', [MobileLoginController::class, 'forgotpassword']);
+    Route::get('admin-forgot-password-form', [MobileLoginController::class , 'updatepasswordform']);
+
+    
+    
 });
 // Validate with Email & Password
 Route::post('admin-validate', [AdminController::class, 'login']);
@@ -135,13 +136,11 @@ Route::post('verify-otp', [MobileLoginController::class, 'verifyOtp']);
 
 
 
-Route::prefix('admin')->middleware(['admin'])->group(function () {
+    Route::prefix('admin')->middleware(['admin'])->group(function () { 
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
     Route::resource('admins', AdminController::class);
-
-
     Route::view('/banners', 'banners');
     Route::resource('countries', CountryController::class);
     Route::resource('states', StateController::class);

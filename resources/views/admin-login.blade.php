@@ -94,7 +94,17 @@
                         <div class="card-body px-5 pb-5 pt-0">
 
                             <h4 class="text-dark mb-6 text-center"></h4>
-                            @if ($errors->any())
+                            {{-- Bootstrap Alert --}}
+                            @if (session('error'))
+                                <div id="send-otp-error" class="alert alert-danger mt-1">
+                                    {{ session('error') }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
+                            {{-- Toastr Alert --}}
+                            {{-- @if ($errors->any())
                                 <div>
                                     <ul>
                                         @foreach ($errors->all() as $error)
@@ -102,8 +112,7 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            @endif
-
+                            @endif --}}
                             <form action="{{ url('admin-validate') }}" method="post">
                                 @csrf
                                 <div class="row">
@@ -121,17 +130,14 @@
 
                                     </div>
                                     <div class="col-md-12">
-
                                         <div class="d-flex justify-content-between mb-3">
-
                                             <div class="custom-control custom-checkbox mr-3 mb-3">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck2">
                                                 <label class="custom-control-label" for="customCheck2">Remember
                                                     me</label>
                                             </div>
-
-                                            <a class="text-color" href="#"> Forgot password? </a>
-
+                                            <a class="text-color" href="#" data-toggle="modal"
+                                                data-target="#exampleModal-forgot-password"> Forgot password? </a>
                                         </div>
 
                                         <div class="d-flex justify-content-center mb-3">
@@ -158,10 +164,7 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+ <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered " role="document">
             <div class="modal-content">
@@ -187,8 +190,10 @@
                                 <input type="text" id="otp-input" name="mobile" value="{{ old('mobile') }}"
                                     class="form-control col-lg-12" id="mobile" aria-describedby="mobileHelp"
                                     placeholder="Enter Mobile Number Or Email">
-                                <span id="error-message" style="color: red; display: none;">Valid number must be 10
-                                    characters or less.</span>
+                                <span id="error-message-input" style="color: red; display: none;">Enter 10 digit
+                                    Number.</span>
+                                <span id="error-message" style="color: red; display: none;">Enter 10 digit Valid
+                                    Number.</span>
                                 @error('mobile')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -198,34 +203,62 @@
                             </div>
                         </div>
                     </form>
-                    <script>
-                        document.getElementById("otp-form").addEventListener('submit', function(e) {
-                            e.preventDefault(); // Prevent the default form submission
-
-                            var otpInput = document.getElementById("otp-input").value;
-                            var errorMessage = document.getElementById("error-message");
-
-                            if (otpInput.length > 10) {
-                                errorMessage.style.display = 'inline';
-                            } else {
-                                errorMessage.style.display = 'none';
-                                this.submit(); // Submit the form if validation passes
-                            }
-                        });
-                    </script>
-
-
-                    @if (session('status'))
-                        <p>{{ session('status') }}</p>
-                    @endif
                 </div>
             </div>
         </div>
-
     </div>
+
+
+{{-- Forgot Password --}}
+    <div class="modal fade" id="exampleModal-forgot-password" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-center">
+                    <h5 class="modal-title" id="exampleModal-forgot-password">Forgot Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        style="position: absolute; right: 1rem;">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                @if (isset($success))
+                    <div class="alert alert-success mt-3">
+                        {{ $success }}
+                    </div>
+                @endif
+                {{-- abc d --}}
+                <div class="modal-body">
+                    <form action="{{ url('forgot-password') }}" method="post" id="otp-form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="mobile-email">Mobile No. / Email ID</label>
+                                <input type="text" id="otp-input" name="mobile" value="{{ old('mobile') }}"
+                                    class="form-control col-lg-12" id="mobile" aria-describedby="mobileHelp"
+                                    placeholder="Enter Mobile Number Or Email">
+                                <span id="error-message-input" style="color: red; display: none;">Enter 10 digit
+                                    Number.</span>
+                                <span id="error-message" style="color: red; display: none;">Enter 10 digit Valid
+                                    Number.</span>
+                                @error('mobile')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="text-center w-100">
+                                <button type="submit" class="btn btn-primary btn-pill mb-4">Send OTP</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
-    <script>
+    {{-- <script>
         @if (Session::has('success'))
 
 
@@ -263,7 +296,33 @@
             }
             toastr.warning("{{ session('danger') }}");
         @endif
+    </script> --}}
+    <script>
+        document.getElementById("otp-form").addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var otpInput = document.getElementById("otp-input").value;
+            var errorMessage = document.getElementById("error-message");
+            var errorMessageInput = document.getElementById("error-message-input");
+
+            // Clear previous error messages
+            errorMessage.style.display = 'none';
+            errorMessageInput.style.display = 'none';
+
+            // Check if OTP input is empty
+            if (otpInput === '') {
+                errorMessageInput.style.display = 'inline';
+            }
+            // Check if OTP input length is greater than 10
+            else if (otpInput.length > 10) {
+                errorMessage.style.display = 'inline';
+            } else {
+                this.submit(); // Submit the form if validation passes
+            }
+        });
+        
     </script>
+    
 </body>
 
 </html>
