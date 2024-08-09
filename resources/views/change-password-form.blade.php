@@ -81,19 +81,20 @@
     <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh">
         <div class="d-flex flex-column justify-content-between">
             <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10">
+                <div class="col-lg-12 col-md-10">
                     <div class="card card-default mb-0">
                         <div class="card-header pb-0">
+
                             <div class="app-brand w-100 d-flex justify-content-center border-bottom-0">
-                                <h4>OTP For Forgot Password</h4>
-                            </div>
-                            {{-- <div class="app-brand w-100 d-flex justify-content-center border-bottom-0">
-                               <a class="w-auto pl-0" href="{{ route('login') }}">
+                                <a class="w-auto pl-0 mb-5" href="{{ route('login') }}">
                                     <img src="https://mangalmandap.com/images/mangal_logo.jpg" height="70px"
                                         width="800px" alt="Mono">
                                     <span class="brand-name text-dark"></span>
                                 </a>
-                            </div> --}}
+                            </div>
+                            <div class="app-brand w-100 d-flex justify-content-center border-bottom-0">
+                                <h4>Change Password</h4>
+                            </div>
 
                         </div>
 
@@ -117,7 +118,7 @@
                             @endif --}}
                             {{-- abc s --}}
 
-                            @php
+                            {{-- @php
                                 if (!function_exists('obfuscateEmailInline')) {
                                     function obfuscateEmailInline($email)
                                     {
@@ -141,7 +142,7 @@ if (!function_exists('obfuscateMobileInline')) {
         return str_repeat('*', $hiddenLength) . substr($mobile, -$visibleLength); // Keep last 4 characters
                                     }
                                 }
-                            @endphp
+                            @endphp --}}
                             {{-- Display Bostrap Message --}}
                             <div id="alert-container-resend" class="mt-3"></div>
                             @if (isset($success))
@@ -160,53 +161,60 @@ if (!function_exists('obfuscateMobileInline')) {
                                     </button>
                                 </div>
                             @endif
-                            <div class="text-center">
+                            {{-- <div class="text-center">
 
                                 <p>OTP has been sent to</p>
                                 <p>+91{{ obfuscateMobileInline($admin->mobile ?? '') }}</p>
                                 <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
 
-                            </div>
+                            </div> --}}
 
                             {{-- @else --}}
                             {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to
                                         login</a> and try again.</p> --}}
                             {{-- @endif --}}
-                            <form action="{{ url('verify-otp-forgot-password') }}" method="post">
+                            <form action="{{ url('admin-change-password') }}" method="post">
                                 @csrf
                                 <div class="row d-flex justify-content-center mt-1">
-                                    <div class="form-group col-lg-8 ">
-                                        <div class="text-center mt-3">
-                                            <label for="otp">Enter OTP</label>
-                                        </div>
+                                    <div class="form-group col-lg-12">
+                                        <label for="password">Password</label>
+                                        <input type="password" name="password" id="password"
+                                            class="form-control input-lg "
+                                            aria-describedby="passwordHelp" placeholder="Enter Password"
+                                            style="text-align: center" maxlength="16">
 
-                                        <input type="text" name="otp" id="otp"
-                                            class="form-control input-lg" aria-describedby="emailHelp"
-                                            placeholder="Enter OTP" value="{{ old('otp') }}"
-                                            style="text-align: center" maxlength="4" pattern="\d{4}">
-                                        {{-- <p class="error-feedback" style="color: red">One attempt to enter
-                                            the correct OTP.</p> --}}
-                                        <input type="hidden" name="mobile" id="mobile"
-                                            value="{{ $admin->mobile ?? '' }}">
+                                        
+
+                                        <label for="password_confirmation">Confirm Password</label>
+                                        <input type="password" name="password_confirmation" id="cpassword"
+                                            class="form-control input-lg @error('password_confirmation') is-invalid @enderror"
+                                            aria-describedby="passwordConfirmationHelp" placeholder="Confirm Password"
+                                            style="text-align: center" maxlength="16">
+
+                                        @error('password_confirmation')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+
+                                       <input type="hidden" name="mobile" id="mobile"
+                                            value="{{ old('mobile', $admin->mobile ?? '') }}">
                                     </div>
 
                                     <div class="col-md-12">
-
-                                        <div class="d-flex justify-content-center mb-3">
-                                            <button type="submit" class="btn btn-primary btn-pill">Verify
-                                                OTP</button>
+                                        <div class="d-flex justify-content-center mt-5">
+                                            <button type="submit" class="btn btn-primary btn-pill">
+                                                Change Password
+                                            </button>
                                         </div>
-                                        <p class="mt-3">Don't have an account yet ?
-                                            <a class="text-blue" href="{{ url('admin-create') }}">Sign Up</a>
-                                        </p>
                                     </div>
                                 </div>
                             </form>
-                            <form id="resend-otp-form" action="{{ url('resend-otp') }}" method="POST">
+                            {{-- <form id="resend-otp-form" action="{{ url('resend-otp') }}" method="POST">
                                 @csrf
                                 <button type="submit" id="resend-otp" disabled>Resend OTP</button>
                             </form>
-                            <p id="timer"></p>
+                            <p id="timer"></p> --}}
                         </div>
                     </div>
 
@@ -321,8 +329,9 @@ if (!function_exists('obfuscateMobileInline')) {
                         document.getElementById('resend-otp').disabled = true; // Disable the button again
                         timer = setInterval(() => {
                             countdown--;
-                            document.getElementById('resend-otp').innerText = `Resend OTP in ${countdown}s`;
-                            
+                            document.getElementById('resend-otp').innerText =
+                                `Resend OTP in ${countdown}s`;
+
                             if (countdown <= 0) {
                                 clearInterval(timer);
                                 var resendOtpButton = document.getElementById('resend-otp');
@@ -330,7 +339,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                 resendOtpButton.innerText = 'Resend OTP'; // Set the button text
                                 resendOtpButton.style.color = '#9E6DE0'; // Set the text color
 
-                                
+
                             }
                         }, 1000);
                     } else {

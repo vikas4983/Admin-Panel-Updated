@@ -122,9 +122,9 @@ Route::get('env-test', function () {
      });
     Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
     Route::post('resend-otp', [MobileLoginController::class, 'resendOtp']);
-    Route::get('verify-otp-form', [MobileLoginController::class ,'showform']);
-    Route::post('forgot-password', [MobileLoginController::class, 'forgotpassword']);
-    Route::get('admin-forgot-password-form', [MobileLoginController::class , 'updatepasswordform']);
+    Route::get('verify-otp-form', [MobileLoginController::class ,'showForm']);
+    Route::post('forgot-password', [MobileLoginController::class, 'forgotPassword']);
+    
 
     
     
@@ -133,6 +133,9 @@ Route::get('env-test', function () {
 Route::post('admin-validate', [AdminController::class, 'login']);
 // Validate with Otp
 Route::post('verify-otp', [MobileLoginController::class, 'verifyOtp']);
+Route::post('verify-otp-forgot-password', [MobileLoginController::class, 'verifyOtpForgotPassword']);
+Route::get('verify-otp-forgot-password', [MobileLoginController::class, 'showVerifyOtpForm']);
+Route::post('admin-change-password', [MobileLoginController::class, 'changePassword']);
 
 
 

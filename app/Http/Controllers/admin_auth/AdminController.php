@@ -32,7 +32,7 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
-          //dd('stop');
+        //dd('stop');
 
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -40,12 +40,13 @@ class AdminController extends Controller
         ]);
 
         if (Auth::guard('admin')->attempt($credentials)) {
-            return redirect('admin/dashboard');
+            return redirect('admin/dashboard')->with('success', 'Logged in successfully!');
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput($request->only('email', 'remember'));
+        return redirect('admin-login')->with('error', 'The email and password do not match.');
+        // return back()->withErrors([
+        //     'email' => 'The provided credentials do not match our records.',
+        // ])->withInput($request->only('email', 'remember'));
     }
 
     public function create()

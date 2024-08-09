@@ -96,7 +96,7 @@
                             <h4 class="text-dark mb-6 text-center"></h4>
                             {{-- Bootstrap Alert --}}
                             @if (session('error'))
-                                <div id="send-otp-error" class="alert alert-danger mt-1">
+                                <div id="send-otp-error" class="alert alert-danger " role="alert">
                                     {{ session('error') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
@@ -164,7 +164,7 @@
             </div>
         </div>
     </div>
- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered " role="document">
             <div class="modal-content">
@@ -178,6 +178,11 @@
                 @if (isset($success))
                     <div class="alert alert-success mt-3">
                         {{ $success }}
+                    </div>
+                @endif
+                @if (isset($error))
+                    <div class="alert alert-danger mt-3">
+                        {{ $error }}
                     </div>
                 @endif
                 {{-- abc d --}}
@@ -209,9 +214,9 @@
     </div>
 
 
-{{-- Forgot Password --}}
-    <div class="modal fade" id="exampleModal-forgot-password" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    {{-- Forgot Password --}}
+    <div class="modal fade" id="exampleModal-forgot-password" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered " role="document">
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-center">
@@ -221,11 +226,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                @if (isset($success))
-                    <div class="alert alert-success mt-3">
-                        {{ $success }}
-                    </div>
-                @endif
+
                 {{-- abc d --}}
                 <div class="modal-body">
                     <form action="{{ url('forgot-password') }}" method="post" id="otp-form">
@@ -320,9 +321,8 @@
                 this.submit(); // Submit the form if validation passes
             }
         });
-        
     </script>
-    
+
 </body>
 
 </html>
