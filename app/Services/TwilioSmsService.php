@@ -35,7 +35,7 @@ class TwilioSmsService
           }
     }
 
-    public function sendSms($admin)
+    public function loginWithOTP($admin)
     {
         // Extract and format the phone number
        // dump($findadmin);

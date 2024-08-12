@@ -31,7 +31,7 @@ class MobileLoginController extends Controller
         return view('verify_otp');
     }
 
-    public function sendOtp(Request $request)
+    public function loginWithOTP(Request $request)
     {
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
@@ -40,7 +40,7 @@ class MobileLoginController extends Controller
         $admin = Admin::where('mobile', $number)->first();
 
         if (!$admin) {
-            // dd('Vikas');
+           
             return redirect('admin-login')->with('error', " Admin not found!");
         }
         $otp = rand(1000, 9999);
@@ -61,8 +61,8 @@ class MobileLoginController extends Controller
             // $admin = Admin::with(['otps' => function ($query) {
             //     $query->latest('id')->first();
             // }])->first();
-            $this->smsApiService->sendSms($admin); // BulkSmsPlansApi
-            $this->TwilioSmsService->sendSms($admin); // Twilio Api
+            $this->smsApiService->OTP($admin); // BulkSmsPlansApi
+            //$this->TwilioSmsService->OTP($admin); // Twilio Api
 
             return view('verify_otp', [
                 'admin' =>
@@ -73,7 +73,10 @@ class MobileLoginController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-    public function resendOtp(Request $request)
+
+
+
+    public function resendOTP(Request $request)
     {
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
@@ -94,8 +97,8 @@ class MobileLoginController extends Controller
                 'mobile' => $mobile,
                 'expires_at' => $currentDateTime
             ]);
-            $this->smsApiService->sendSms($admin); // Using BulkSmsPlans API
-            $this->TwilioSmsService->sendSms($admin); // Using Twilio API
+            $this->smsApiService->OTP($admin); // Using BulkSmsPlans API
+            //$this->TwilioSmsService->resendOTP($admin); // Using Twilio API
             return response()->json(['success' => true, 'message' => 'Resend OTP sent successfully!']);
         } catch (\Exception $e) {
 
@@ -130,9 +133,9 @@ class MobileLoginController extends Controller
         return redirect('admin/dashboard')->with('success', 'Logged in successfully');
     }
 
-    public function forgotPassword(Request $request)
+    public function forgetOTP(Request $request)
     {
-
+       
         $validatedata = $request->validate([
             'mobile' => ['required', 'max:10']
         ]);
@@ -156,8 +159,8 @@ class MobileLoginController extends Controller
             'mobile' => $request->mobile,
             'expires_at' => $currentDateTime
         ]);
-        $this->smsApiService->sendSms($admin); // BulkSmsPlansApi
-        $this->TwilioSmsService->sendSms($admin); // Twilio Api
+        $this->smsApiService->OTP($admin);
+       // $this->TwilioSmsService->sendSms($admin); // Twilio Api
         return view('admin-forgot-password-form', [
             'admin' =>
             $admin,

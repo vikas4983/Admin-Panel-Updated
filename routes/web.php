@@ -120,10 +120,10 @@ Route::get('env-test', function () {
       Route::middleware(['CheckOTPSession'])->group(function () {
       Route::view('admin-login', 'admin-login' );
      });
-    Route::post('send-otp', [MobileLoginController::class, 'sendOtp']);
-    Route::post('resend-otp', [MobileLoginController::class, 'resendOtp']);
+    Route::post('send-otp', [MobileLoginController::class, 'loginWithOTP']);
+    Route::post('resend-otp', [MobileLoginController::class, 'resendOTP']);
     Route::get('verify-otp-form', [MobileLoginController::class ,'showForm']);
-    Route::post('forgot-password', [MobileLoginController::class, 'forgotPassword']);
+    Route::post('forgot-password', [MobileLoginController::class, 'forgetOTP']);
     
 
     
