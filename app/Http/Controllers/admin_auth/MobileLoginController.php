@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin_auth;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\MobileLogin;
+use App\Services\AdminEmailService;
 use App\Services\PhoneNumberService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,11 +21,13 @@ class MobileLoginController extends Controller
     protected $smsApiService;
     protected $phoneNumberService;
     protected $TwilioSmsService;
-    public function __construct(smsApiService $smsApiService, phoneNumberService $phoneNumberService, TwilioSmsService $TwilioSmsService)
+    protected $AdminEmailService;
+    public function __construct(AdminEmailService $AdminEmailService,smsApiService $smsApiService, phoneNumberService $phoneNumberService, TwilioSmsService $TwilioSmsService)
     {
         $this->smsApiService = $smsApiService;
         $this->phoneNumberService = $phoneNumberService;
         $this->TwilioSmsService = $TwilioSmsService;
+        $this->AdminEmailService = $AdminEmailService;
     }
     public function showform()
     {
@@ -33,6 +36,8 @@ class MobileLoginController extends Controller
 
     public function loginWithOTP(Request $request)
     {
+        $functionName = __FUNCTION__;
+        
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
         ]);
@@ -62,6 +67,8 @@ class MobileLoginController extends Controller
             //     $query->latest('id')->first();
             // }])->first();
             $this->smsApiService->OTP($admin); // BulkSmsPlansApi
+            $this->AdminEmailService->configureMailer($admin, $functionName);
+            
             //$this->TwilioSmsService->OTP($admin); // Twilio Api
 
             return view('verify_otp', [
@@ -77,7 +84,9 @@ class MobileLoginController extends Controller
 
 
     public function resendOTP(Request $request)
-    {
+    { 
+        $functionName = __FUNCTION__;
+
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
         ]);
@@ -98,8 +107,9 @@ class MobileLoginController extends Controller
                 'expires_at' => $currentDateTime
             ]);
             $this->smsApiService->OTP($admin); // Using BulkSmsPlans API
+            $this->AdminEmailService->configureMailer($admin, $functionName);
             //$this->TwilioSmsService->resendOTP($admin); // Using Twilio API
-            return response()->json(['success' => true, 'message' => 'Resend OTP sent successfully!']);
+            return  response()->json(['success' => true, 'message' => 'Resend OTP sent successfully!']);
         } catch (\Exception $e) {
 
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
@@ -135,7 +145,7 @@ class MobileLoginController extends Controller
 
     public function forgetOTP(Request $request)
     {
-       
+        $functionName = __FUNCTION__;
         $validatedata = $request->validate([
             'mobile' => ['required', 'max:10']
         ]);
@@ -160,6 +170,7 @@ class MobileLoginController extends Controller
             'expires_at' => $currentDateTime
         ]);
         $this->smsApiService->OTP($admin);
+        $this->AdminEmailService->configureMailer($admin, $functionName);
        // $this->TwilioSmsService->sendSms($admin); // Twilio Api
         return view('admin-forgot-password-form', [
             'admin' =>

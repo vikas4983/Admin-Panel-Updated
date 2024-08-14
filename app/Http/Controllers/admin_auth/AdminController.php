@@ -96,7 +96,7 @@ class AdminController extends Controller
            
         ];
 
-        $this->emailService->sendMail('admin', $data);
+        $this->emailService->sendMail($admin, $data);
 
         return redirect()->back()->with('success', 'Admin Registered Successfully');
     }

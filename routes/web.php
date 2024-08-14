@@ -111,23 +111,26 @@ Route::get('env-test', function () {
     ];
 });
 
+
+
+
+
+
+Route::get('send-email', [EmailController::class,'loginWithOTP']);
+
 // Admin Login with email & Password
     Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
-   
+
     // Login With OTP
-      Route::middleware(['CheckOTPSession'])->group(function () {
-      Route::view('admin-login', 'admin-login' );
-     });
+    Route::middleware(['CheckOTPSession'])->group(function () {
+        Route::view('admin-login', 'admin-login');
+    });
     Route::post('send-otp', [MobileLoginController::class, 'loginWithOTP']);
     Route::post('resend-otp', [MobileLoginController::class, 'resendOTP']);
-    Route::get('verify-otp-form', [MobileLoginController::class ,'showForm']);
+    Route::get('verify-otp-form', [MobileLoginController::class, 'showForm']);
     Route::post('forgot-password', [MobileLoginController::class, 'forgetOTP']);
-    
-
-    
-    
 });
 // Validate with Email & Password
 Route::post('admin-validate', [AdminController::class, 'login']);
@@ -139,7 +142,7 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
 
 
 
-    Route::prefix('admin')->middleware(['admin'])->group(function () { 
+Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
@@ -298,8 +301,7 @@ Route::get('home', function () {
 
 Route::prefix('admin')->group(function () {
     // Admin Auth
-    Route::middleware(['admin'])->group(function () {
-    });
+    Route::middleware(['admin'])->group(function () {});
 });
 
 

@@ -5,26 +5,20 @@
     $spotelights = $paidUser->user->spotelights; // Get the collection
    
     $lastSpoteLight = $spotelights->isNotEmpty() ? $spotelights->last() : null; // Get the last item if not empty
-   @endphp --}}
-            {{-- @php
+   @endphp --}} {{-- @php
 $currentDate = \Carbon\Carbon::now();
     $spotLight = $paidUser->user->spotelights->last(); @endphp
             @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color: #9E6DE2; border-radius: 10px;"
     @else
-        style="background-color: transparent;" @endif --}}
-        
-        >
+        style="background-color: transparent;" @endif --}}>
             <div class="card card-default mt-7">
                 <div class="card-body"
-                
-                 @php
+                    @php
 $currentDate = \Carbon\Carbon::now();
     $spotLight = $paidUser->user->spotelights->last(); @endphp
-            @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color:#E8DAEF ; border-radius: 10px;"
+                    @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color:#E8DAEF ; border-radius: 10px;"
     @else
-        style="background-color: transparent;" @endif
-                
-                >
+        style="background-color: transparent;" @endif>
                     <a class="d-block mb-2" href="javascript:void(0)" data-toggle="modal"
                         data-target="#modal-contact-{{ $paidUser->user->id }}">
                         <div class="image mb-3 d-inline-flex mt-n8">
@@ -40,7 +34,7 @@ $currentDate = \Carbon\Carbon::now();
                                 <i class="mdi mdi-eye" style="color:rgb(14, 193, 8)"></i>
                             @else
                             @endif
-                           
+
                             @if ($paidUser->is_paid == 'Active')
                                 <i class="mdi mdi-chess-queen" style="color:#e90b0b"></i>
                             @else
@@ -125,18 +119,21 @@ $currentDate = \Carbon\Carbon::now();
                             <i class="mdi mdi-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                           {{-- Spote Light Modal --}}
-                              
-                               @if(!empty($paidUser->user->spotelights) && $paidUser->user->spotelights->last() && $paidUser->user->spotelights->last()->is_spote_light == 'Active')
-                              <button type="button" class="dropdown-item" data-toggle="modal"
-                                data-target="#exampleModal-editSpoteLight{{ $paidUser->user->id }}">
-                                <i class="mdi mdi-wallet-membership"></i>Edit Spote Light
-                              </button>
-                              @else
-                            <button type="button" class="dropdown-item" data-toggle="modal"
-                                data-target="#exampleModal-spoteLight{{ $paidUser->user->id }}">
-                                <i class="mdi mdi-wallet-membership"></i> Spote Light
-                            </button>
+                            {{-- Spote Light Modal --}}
+
+                            @if (
+                                !empty($paidUser->user->spotelights) &&
+                                    $paidUser->user->spotelights->last() &&
+                                    $paidUser->user->spotelights->last()->is_spote_light == 'Active')
+                                <button type="button" class="dropdown-item" data-toggle="modal"
+                                    data-target="#exampleModal-editSpoteLight{{ $paidUser->user->id }}">
+                                    <i class="mdi mdi-wallet-membership"></i>Edit Spote Light
+                                </button>
+                            @else
+                                <button type="button" class="dropdown-item" data-toggle="modal"
+                                    data-target="#exampleModal-spoteLight{{ $paidUser->user->id }}">
+                                    <i class="mdi mdi-wallet-membership"></i> Spote Light
+                                </button>
                             @endif
                             {{-- Edit Plan Modal --}}
                             <button type="button" class="dropdown-item" data-toggle="modal"
@@ -148,16 +145,16 @@ $currentDate = \Carbon\Carbon::now();
                             <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
                         </div>
                     </div>
-                 </div>
+                </div>
                 <!-- Spote Light Modal -->
                 @if (!empty($paidUser))
                     <x-spote-light-modal-component :paidUser="$paidUser" />
                 @endif
-                 <!--Edit  Spote Light Modal -->
+                <!--Edit  Spote Light Modal -->
                 @if (!empty($paidUser))
                     <x-edit-spote-light-modal-component :paidUser="$paidUser" />
                 @endif
-               
+
                 <!-- Edit Plan Modal -->
                 @if (!empty($paidUser))
                     <x-edit-plan-component :paidUser="$paidUser" />

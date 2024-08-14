@@ -1,16 +1,21 @@
-
-
 @if ($users ?? '')
     @foreach ($users as $user)
         <div class="col-lg-4 col-xl-4 col-xxl-4">
             <div class="card card-default mt-7">
-                <div class="card-body">
+                <div class="card-body"
+                    @php
+$currentDate = \Carbon\Carbon::now();
+    $spotLight = $user->spotelights->last(); @endphp
+                    @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color:#E8DAEF ; border-radius: 10px;"
+    @else
+        style="background-color: transparent;" @endif>
                     <a class="d-block mb-2" href="javascript:void(0)" data-toggle="modal"
                         data-target="#modal-contact-{{ $user->id }}">
                         <div class="image mb-3 d-inline-flex mt-n8">
                             <img src="{{ asset('storage/admin/user-images/' . ($user->image ?? 'male-default.jpg')) }}"
-                                class="img-fluid rounded-circle d-inline-block" alt="Avatar Image" width="100px"
-                                height="100px">
+                            class="img-fluid rounded-circle d-inline-block" alt="Avatar Image" width="100px"
+                            height="100px"
+                            style="border: 2px solid #22ff00; padding: 2px; border-radius: 50%; box-sizing: border-box;">
                         </div>
                         <h5 class="card-title">{{ $user->name ?? '' }} ({{ $user->id }}) <i
                                 class="mdi mdi-security"> </i>
@@ -42,6 +47,15 @@
                                         <i class="mdi mdi-heart-half-full mr-1"></i>
                                         <span>Never Married</span>
                                     </li>
+                                    @if ($spotLight && $spotLight->is_spote_light == 'Active')
+                                        <li class="d-flex ">
+                                            <i class="mdi mdi-eye-plus mr-1"></i>
+                                            <span>
+                                                <h6>{{ \Carbon\Carbon::parse($spotLight->duration)->format('d-M-Y') ?? '' }}
+                                                </h6>
+                                            </span>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="col">
@@ -63,6 +77,7 @@
                                         <i class="mdi mdi-star-box mr-1"></i>
                                         <span>Khatri</span>
                                     </li>
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -86,7 +101,7 @@
                                 <i class="mdi mdi-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                
+
                                 <a class="dropdown-item" href="javascript:void(0)">Another action</a>
                                 <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
                             </div>
@@ -95,7 +110,7 @@
                             <i class="mdi mdi-close"></i>
                         </button>
                     </div>
-                    
+
                     <div class="modal-body pt-0">
                         <div class="row no-gutters">
                             <div class="col-md-6">
@@ -214,50 +229,50 @@
                                     </div>
                                 </div>
                                 <div class="contact-info px-4">
-                                     @if ($user->payments->isNotEmpty() && $user->payments->first()->is_paid == 'True')
-                                    <h4 class="mb-1">Current Plan</h4>
-                                    <div class="row">
-                                        
-                                        <div class="col mt-3">
-                                            <ul class="list-unstyled d-inline-block mb-5">
+                                    @if ($user->payments->isNotEmpty() && $user->payments->first()->is_paid == 'True')
+                                        <h4 class="mb-1">Current Plan</h4>
+                                        <div class="row">
 
-                                                <li class="d-flex mb-1">
-                                                    <i class="mdi mdi-chess-queen mr-1"></i>
-                                                    <span>
-                                                        <h6>Name</h6>
-                                                    </span>
-                                                </li>
-                                                <li class="d-flex mt-2">
-                                                    <i class="mdi mdi-contacts mr-1"></i>
-                                                    <span>
-                                                        <h6>Left Contact</h6>
-                                                    </span>
-                                                </li>
-                                                <li class="d-flex mt-2">
-                                                    <i class="mdi mdi-calendar-clock mr-1"></i>
-                                                    <span>
-                                                        <h6>Expiry Date</h6>
-                                                    </span>
-                                                </li>
+                                            <div class="col mt-3">
+                                                <ul class="list-unstyled d-inline-block mb-5">
 
-                                            </ul>
+                                                    <li class="d-flex mb-1">
+                                                        <i class="mdi mdi-chess-queen mr-1"></i>
+                                                        <span>
+                                                            <h6>Name</h6>
+                                                        </span>
+                                                    </li>
+                                                    <li class="d-flex mt-2">
+                                                        <i class="mdi mdi-contacts mr-1"></i>
+                                                        <span>
+                                                            <h6>Left Contact</h6>
+                                                        </span>
+                                                    </li>
+                                                    <li class="d-flex mt-2">
+                                                        <i class="mdi mdi-calendar-clock mr-1"></i>
+                                                        <span>
+                                                            <h6>Expiry Date</h6>
+                                                        </span>
+                                                    </li>
 
-                                        </div>
+                                                </ul>
 
-                                        <div class="col mt-3">
-                                            <ul class="list-unstyled d-inline-block mb-5">
-                                                  
-                                                <li class="d-flex mb-1">
-                                                    <span>
-                                                      
+                                            </div>
+
+                                            <div class="col mt-3">
+                                                <ul class="list-unstyled d-inline-block mb-5">
+
+                                                    <li class="d-flex mb-1">
+                                                        <span>
+
                                                             <h6>{{ $user->payments->last()->plan->name }}</h6>
-                                                     
-                                                            
-                                                  
-                                                    </span>
-                                                </li>
 
-                                             
+
+
+                                                        </span>
+                                                    </li>
+
+
                                                     <li class="d-flex mt-2">
                                                         <span>
                                                             <h6>{{ $user->payments->last()->contact ?? 'No Contact Available' }}
@@ -272,16 +287,15 @@
                                                             </h6>
                                                         </span>
                                                     </li>
-                                              
-                                            </ul>
+
+                                                </ul>
+
+                                            </div>
+
 
                                         </div>
-                                       
-
-                                    </div>
-                                     @else
-                                      
-                                          @endif
+                                    @else
+                                    @endif
                                 </div>
                             </div>
                         </div>

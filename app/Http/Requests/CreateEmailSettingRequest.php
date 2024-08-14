@@ -23,7 +23,7 @@ class CreateEmailSettingRequest extends FormRequest
     {
         return [
             'host' => 'required|string|max:50',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:email_settings,email',
             'port' => 'required|integer|min:1|max:65535',
             'password' => 'required|min:6|max:16',
             'status' => 'required|in:0,1',

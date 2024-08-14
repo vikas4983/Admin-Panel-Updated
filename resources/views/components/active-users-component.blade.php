@@ -2,13 +2,20 @@
     @foreach ($activeUsers as $activeUser)
         <div class="col-lg-4 col-xl-4 col-xxl-4">
             <div class="card card-default mt-7">
-                <div class="card-body">
+                <div class="card-body"
+                    @php
+$currentDate = \Carbon\Carbon::now();
+    $spotLight = $activeUser->spotelights->last(); @endphp
+                    @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color:#E8DAEF ; border-radius: 10px;"
+    @else
+        style="background-color: transparent;" @endif>
                     <a class="d-block mb-2" href="javascript:void(0)" data-toggle="modal"
                         data-target="#modal-contact-{{ $activeUser->id }}">
                         <div class="image mb-3 d-inline-flex mt-n8">
                             <img src="{{ asset('storage/admin/user-images/' . ($activeUser->image ?? 'male-default.jpg')) }}"
-                                class="img-fluid rounded-circle d-inline-block" alt="Avatar Image" width="100px"
-                                height="100px">
+                            class="img-fluid rounded-circle d-inline-block" alt="Avatar Image" width="100px"
+                            height="100px"
+                            style="border: 2px solid #22ff00; padding: 2px; border-radius: 50%; box-sizing: border-box;">
                         </div>
                         <h5 class="card-title">{{ $activeUser->name ?? '' }} ({{ $activeUser->id }})
                             <i class="mdi mdi-security"></i>
@@ -40,6 +47,15 @@
                                         <i class="mdi mdi-heart-half-full mr-1"></i>
                                         <span>Never Married</span>
                                     </li>
+                                    @if ($spotLight && $spotLight->is_spote_light == 'Active')
+                                        <li class="d-flex ">
+                                            <i class="mdi mdi-eye-plus mr-1"></i>
+                                            <span>
+                                                <h6>{{ \Carbon\Carbon::parse($spotLight->duration)->format('d-M-Y') ?? '' }}
+                                                </h6>
+                                            </span>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="col">
@@ -83,38 +99,32 @@
                                 <i class="mdi mdi-dots-vertical"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                             @if ($activeUser->payments->isNotEmpty())
+                                @if ($activeUser->payments->isNotEmpty())
                                     @php
                                         $activePlan = $activeUser->payments->last();
                                         $expiryDate = \Carbon\Carbon::parse($activePlan->expiry_date);
                                         $currentDate = \Carbon\Carbon::now();
                                     @endphp
 
-                                    @if ($expiryDate >=   $currentDate)
-                                       
-                                            <button type="button" class="dropdown-item" data-toggle="modal"
-                                                data-target="#exampleModal-editPlan{{ $activeUser->id }}">
-                                                <i class="mdi mdi-wallet-membership"></i> Edit Plan
-                                            </button>
-                                        
+                                    @if ($expiryDate >= $currentDate)
+                                        <button type="button" class="dropdown-item" data-toggle="modal"
+                                            data-target="#exampleModal-editPlan{{ $activeUser->id }}">
+                                            <i class="mdi mdi-wallet-membership"></i> Edit Plan
+                                        </button>
                                     @else
-                                        
-                                            <button type="button" class="dropdown-item" data-toggle="modal"
-                                                data-target="#exampleModal-upgradePlan{{ $activeUser->id }}">
-                                                <i class="mdi mdi-wallet-membership"></i> Upgrade Plan
-                                            </button>
-                                        
-                                    @endif
-                                @else
-                                   
                                         <button type="button" class="dropdown-item" data-toggle="modal"
                                             data-target="#exampleModal-upgradePlan{{ $activeUser->id }}">
                                             <i class="mdi mdi-wallet-membership"></i> Upgrade Plan
                                         </button>
-                                   
+                                    @endif
+                                @else
+                                    <button type="button" class="dropdown-item" data-toggle="modal"
+                                        data-target="#exampleModal-upgradePlan{{ $activeUser->id }}">
+                                        <i class="mdi mdi-wallet-membership"></i> Upgrade Plan
+                                    </button>
                                 @endif
 
-                                
+
                                 <a class="dropdown-item" href="javascript:void(0)">Another action</a>
                                 <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
                             </div>
@@ -124,13 +134,13 @@
                         </button>
                     </div>
 
-                   
-                   
-                   
-                         <!-- Upgrade Plan Modal -->
+
+
+
+                    <!-- Upgrade Plan Modal -->
                     @if (!empty($activeUser))
-                            <x-upgrade-plan-component :activeUser="$activeUser"  />
-                        @endif
+                        <x-upgrade-plan-component :activeUser="$activeUser" />
+                    @endif
 
                     <div class="modal-body pt-0">
                         <div class="row no-gutters">

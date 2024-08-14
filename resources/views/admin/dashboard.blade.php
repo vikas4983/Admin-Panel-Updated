@@ -13,7 +13,7 @@
         rel="stylesheet" />
 @endsection
 @section('content')
-    @dump(session()->all());
+    {{-- @dump(session()->all()); --}}
     <div class="content-wrapper">
         <div class="content">
             <div class="row">

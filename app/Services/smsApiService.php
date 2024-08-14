@@ -18,8 +18,7 @@ class SmsApiService
         } else {
             return redirect()->back()->with('error', "Something went wrong, please try again!");
         }
-
-
+       
         $settings = SmsApi::where('status', 1)->get();
 
         if (!$settings) {

@@ -35,7 +35,7 @@ class UserController extends Controller
         $paidUsers = count($this->paidUsers());
         $users = User::with(['payments' => function ($query) {
             $query->orderBy('created_at', 'desc'); // Get the latest payment
-        }])->orderBy('created_at', 'desc')->get();
+        }])->where('status', 1)->orderBy('created_at', 'desc')->get();
 
 
 
