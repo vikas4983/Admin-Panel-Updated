@@ -195,6 +195,7 @@
                                 <input type="text" id="otp-input" name="mobile" value="{{ old('mobile') }}"
                                     class="form-control col-lg-12" id="mobile" aria-describedby="mobileHelp"
                                     placeholder="Enter Mobile Number Or Email">
+                                    <input type="hidden" name="LoginWithOTP" value="LoginWithOTP">
                                 <span id="error-message-input" style="color: red; display: none;">Enter 10 digit
                                     Number.</span>
                                 <span id="error-message" style="color: red; display: none;">Enter 10 digit Valid
@@ -237,6 +238,7 @@
                                 <input type="text" id="otp-input" name="mobile" value="{{ old('mobile') }}"
                                     class="form-control col-lg-12" id="mobile" aria-describedby="mobileHelp"
                                     placeholder="Enter Mobile Number Or Email">
+                                    <input type="hidden" name="ForgotPassword" value="ForgotPassword">
                                 <span id="error-message-input" style="color: red; display: none;">Enter 10 digit
                                     Number.</span>
                                 <span id="error-message" style="color: red; display: none;">Enter 10 digit Valid

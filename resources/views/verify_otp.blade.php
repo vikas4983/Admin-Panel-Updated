@@ -188,6 +188,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                             the correct OTP.</p> --}}
                                         <input type="hidden" name="mobile" id="mobile"
                                             value="{{ $admin->mobile ?? '' }}">
+                                            
                                     </div>
 
                                     <div class="col-md-12">
@@ -203,6 +204,8 @@ if (!function_exists('obfuscateMobileInline')) {
                                 </div>
                             </form>
                             <form id="resend-otp-form" action="{{ url('resend-otp') }}" method="POST">
+                                <input type="hidden" name="ResendOTP" id="ResendOTP"
+                                            value="ResendOTP">
                                 @csrf
                                 <div class="d-flex justify-content-center mb-3">
                                     <button type="submit" id="resend-otp" disabled
@@ -269,6 +272,7 @@ if (!function_exists('obfuscateMobileInline')) {
             var timer = setInterval(() => {
                 countdown--;
                 document.getElementById('resend-otp').innerText = `Resend OTP in ${countdown}s`;
+                console.log()
                 if (countdown <= 0) {
                     clearInterval(timer);
                     var resendOtpButton = document.getElementById('resend-otp');
@@ -282,6 +286,13 @@ if (!function_exists('obfuscateMobileInline')) {
     
         document.getElementById('resend-otp-form').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent the default form submission
+            console.log('click');
+            const mobile = document.querySelector('input[name="mobile"]').value;
+            const ResendOTP = document.querySelector('input[name="ResendOTP"]').value;
+              console.log('Mobile:', mobile);
+              console.log('ResendOTP:', ResendOTP);
+    
+    // Pause execution in the browser's developer tools
     
             fetch('{{ url('resend-otp') }}', {
                     method: 'POST',
@@ -290,8 +301,11 @@ if (!function_exists('obfuscateMobileInline')) {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        mobile: document.querySelector('input[name="mobile"]').value // Ensure this input exists and has a value
+                        mobile: mobile,
+                       ResendOTP: ResendOTP
                     })
+                    
+                    
                 })
                 .then(response => {
                     if (!response.ok) {

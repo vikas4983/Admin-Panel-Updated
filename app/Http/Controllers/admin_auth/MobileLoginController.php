@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin_auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\EmailTemplate;
 use App\Models\MobileLogin;
 use App\Services\AdminEmailService;
 use App\Services\PhoneNumberService;
@@ -22,7 +23,7 @@ class MobileLoginController extends Controller
     protected $phoneNumberService;
     protected $TwilioSmsService;
     protected $AdminEmailService;
-    public function __construct(AdminEmailService $AdminEmailService,smsApiService $smsApiService, phoneNumberService $phoneNumberService, TwilioSmsService $TwilioSmsService)
+    public function __construct(AdminEmailService $AdminEmailService, smsApiService $smsApiService, phoneNumberService $phoneNumberService, TwilioSmsService $TwilioSmsService)
     {
         $this->smsApiService = $smsApiService;
         $this->phoneNumberService = $phoneNumberService;
@@ -36,16 +37,16 @@ class MobileLoginController extends Controller
 
     public function loginWithOTP(Request $request)
     {
-        $functionName = __FUNCTION__;
-        
         $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
+            'LoginWithOTP' => ['required', 'string'],
         ]);
         $number = $validateRequest['mobile'];
+        $name = $validateRequest['LoginWithOTP'];
         $admin = Admin::where('mobile', $number)->first();
 
         if (!$admin) {
-           
+
             return redirect('admin-login')->with('error', " Admin not found!");
         }
         $otp = rand(1000, 9999);
@@ -63,12 +64,11 @@ class MobileLoginController extends Controller
                 'mobile' => $request->mobile,
                 'expires_at' => $currentDateTime
             ]);
-            // $admin = Admin::with(['otps' => function ($query) {
-            //     $query->latest('id')->first();
-            // }])->first();
+
+            $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
             $this->smsApiService->OTP($admin); // BulkSmsPlansApi
-            $this->AdminEmailService->configureMailer($admin, $functionName);
-            
+            $this->AdminEmailService->configureMailer($admin, $emailTemplate);
+
             //$this->TwilioSmsService->OTP($admin); // Twilio Api
 
             return view('verify_otp', [
@@ -84,13 +84,15 @@ class MobileLoginController extends Controller
 
 
     public function resendOTP(Request $request)
-    { 
-        $functionName = __FUNCTION__;
-
-        $validateRequest = $request->validate([
+    {
+       $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
+            'ResendOTP' => ['required', 'string'],
+           
         ]);
         $mobile = $validateRequest['mobile'];
+        $name = $validateRequest['ResendOTP'];
+       
         try {
 
             $admin = Admin::where('mobile', $mobile)->first();
@@ -106,8 +108,10 @@ class MobileLoginController extends Controller
                 'mobile' => $mobile,
                 'expires_at' => $currentDateTime
             ]);
+            $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
+           
             $this->smsApiService->OTP($admin); // Using BulkSmsPlans API
-            $this->AdminEmailService->configureMailer($admin, $functionName);
+            $this->AdminEmailService->configureMailer($admin, $emailTemplate);
             //$this->TwilioSmsService->resendOTP($admin); // Using Twilio API
             return  response()->json(['success' => true, 'message' => 'Resend OTP sent successfully!']);
         } catch (\Exception $e) {
@@ -145,10 +149,15 @@ class MobileLoginController extends Controller
 
     public function forgetOTP(Request $request)
     {
-        $functionName = __FUNCTION__;
+
         $validatedata = $request->validate([
-            'mobile' => ['required', 'max:10']
+            'mobile' => ['required', 'max:10'],
+            'ForgotPassword' => ['required', 'string']
         ]);
+
+        //Validate the Mail
+        $name = $validatedata['ForgotPassword'];
+        $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
 
         $admin = Admin::where('mobile', $validatedata['mobile'])->first();
         if (!$admin) {
@@ -169,9 +178,10 @@ class MobileLoginController extends Controller
             'mobile' => $request->mobile,
             'expires_at' => $currentDateTime
         ]);
+        
         $this->smsApiService->OTP($admin);
-        $this->AdminEmailService->configureMailer($admin, $functionName);
-       // $this->TwilioSmsService->sendSms($admin); // Twilio Api
+        $this->AdminEmailService->configureMailer($admin, $emailTemplate);
+        // $this->TwilioSmsService->sendSms($admin); // Twilio Api
         return view('admin-forgot-password-form', [
             'admin' =>
             $admin,
@@ -206,7 +216,7 @@ class MobileLoginController extends Controller
 
     public function changePassword(Request $request)
     {
-    
+
         try {
             // Validate the request data
             $validatedData = $request->validate([
@@ -255,8 +265,6 @@ class MobileLoginController extends Controller
             // Redirect back with an error message
             return redirect('admin-login')->with('error', 'An error occurred while changing the password. Please try again.');
         }
-    
-
     }
     public function showVerifyOtpForm(Request $request)
     {

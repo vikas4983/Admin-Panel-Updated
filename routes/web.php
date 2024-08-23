@@ -67,6 +67,7 @@ use App\Http\Controllers\SuccessStoryController;
 use App\Http\Controllers\TextPaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\admin_auth\MobileLoginController;
+use App\Http\Controllers\EmailTemplateController;
 use App\Models\City;
 use App\Models\Email;
 use App\Models\Payment;
@@ -142,7 +143,7 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
 
 
 
-Route::prefix('admin')->middleware(['admin'])->group(function () {
+    Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
@@ -175,6 +176,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('spotelights', SpoteLightController::class);
     Route::get('user-orders', [UserController::class, 'paidusersorders']);
     Route::resource('paymentgateways', PaymentGatewayController::class);
+    Route::resource('emailTemplates', EmailTemplateController::class);
 
 
     // CMS Delete,Active,InActive  Route

@@ -1896,7 +1896,10 @@
                 </script>
             </footer>
         </div>
-
+        <script>
+            const RESEND_OTP_URL = '{{ url('resend-otp') }}';
+            const CSRF_TOKEN = '{{ csrf_token() }}';
+        </script>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
         <script src="{{ asset('assets/auth/plugins/toaster/toastr.min.js') }}"></script>
@@ -1914,6 +1917,7 @@
         <script src="{{ asset('assets/auth/js/map.js') }}"></script>
         <script src="{{ asset('assets/auth/js/custom.js') }}"></script>
         <script src="{{ asset('assets/auth/js/custom-new-js/create-delete-active-inactive.js') }}"></script>
+        <script src="{{ asset('assets/auth/js/custom-new-js/resend-OTP.js') }}"></script>
         <script src="{{ asset('assets/auth/js/custom-new-js/modal-form-validation.js') }}"></script>
         {{-- Admin Edit Form --}}
         <script src="{{ asset('assets/auth/js/custom-new-js/admin-edit-form.js') }}"></script>

@@ -12,7 +12,7 @@
                     <form action="{{ url($destroyRoute, $id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                       <button type="submit" onclick="DeleteFunction();" class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i class=" fa fa-trash" style="color: red"></i></button>
+                       <button type="submit" onclick="DeleteFunction();" class="btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i class=" fa fa-trash" style="color: red"></i></button>
                         
                     </form>
  <script>

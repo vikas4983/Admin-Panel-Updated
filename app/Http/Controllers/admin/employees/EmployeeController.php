@@ -14,8 +14,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees =
-        Employee::orderByDesc('created_at')->paginate(10);
+        $employees =Employee::orderByDesc('created_at')->paginate(10);
         $count = ($employees->currentPage() - 1) * $employees->perPage();
         // Activbe Count
         $active = Employee::where('status', 1)->count();

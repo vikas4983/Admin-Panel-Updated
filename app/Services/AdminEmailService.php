@@ -12,30 +12,30 @@ class AdminEmailService
 {
 
 
-    public function configureMailer($admin, $functionName)
+    public function configureMailer($admin, $emailTemplate)
     {  
-       // dump($admin, $functionName);
+        //dd($name);
         
-          if($functionName === "loginWithOTP") {
-           $type = [
-            'title' => 'Mail from MMM',
-            'type' => 'login',
-         ];
-          }
-          if($functionName ==="resendOTP") {
-           $type = [
-            'title' => 'Mail from MMM',
-            'type' => 'resend',
-         ];
-          }
-          if($functionName ==="forgetOTP") {
-           $type = [
-            'title' => 'Mail from MMM',
-            'type' => 'forgot',
-         ];
-          }
+         //  if($functionName === "loginWithOTP") {
+         //   $type = [
+         //    'subject' => 'Login',
+         //    'type' => 'login',
+         // ];
+         //  }
+         //  if($functionName ==="resendOTP") {
+         //   $type = [
+         //    'subject' => 'Resend',
+         //    'type' => 'resend',
+         // ];
+         //  }
+         //  if($functionName ==="forgetOTP") {
+         //   $type = [
+         //    'subject' => 'Forgot',
+         //    'type' => 'forgot',
+         // ];
+         //  }
 
-        Mail::to($admin->email)->send(new Email($admin, $type));
+        Mail::to($admin->email)->send(new Email($admin,$emailTemplate));
         //return view('emails.email');
     
 }
