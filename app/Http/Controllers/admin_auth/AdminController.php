@@ -7,6 +7,7 @@ use App\Http\Requests\CreateAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Models\ActivityLog;
 use App\Models\Admin;
+use App\Models\EmailTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\File as HttpFile;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Services\EmailService;
+use App\Services\AdminEmailService;
 
 class AdminController extends Controller
 {
@@ -24,10 +26,12 @@ class AdminController extends Controller
      * Display a listing of the resource.
      */
     protected $emailService;
+    protected $adminEmailService;
 
-    public function __construct(EmailService $emailService)
+    public function __construct(EmailService $emailService, AdminEmailService $adminEmailService)
     {
         $this->emailService = $emailService;
+        $this->adminEmailService = $adminEmailService;
     }
 
     public function login(Request $request)
@@ -38,7 +42,12 @@ class AdminController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
-
+           $admin = Admin::where('status', 1)->first();
+         
+           if(!$admin){
+           // dd('stop');
+            return redirect('admin-login')->with('error', 'Verify your account first, Contact with Admin!');
+           }
         if (Auth::guard('admin')->attempt($credentials)) {
             return redirect('admin/dashboard')->with('success', 'Logged in successfully!');
         }
@@ -74,9 +83,8 @@ class AdminController extends Controller
      */
     public function store(CreateAdminRequest $request)
     {
-        //dd($request->all());
-
-        $fileName = rand(100, 1000) . time() . '.' . $request->file('image')->getClientOriginalExtension();
+       $name = $request->Registration;
+    $fileName = rand(100, 1000) . time() . '.' . $request->file('image')->getClientOriginalExtension();
         $request->file('image')->move(public_path('storage/admin/admin-images/'), $fileName);
 
            $admin = Admin::create([
@@ -88,15 +96,17 @@ class AdminController extends Controller
             'status' => $request->status,
             'password' => Hash::make($request->password)
         ]);
-
+        //dd( $admin);
         $data = [
             'email' => $admin->email,
             'name' => $admin->name,
             'subject' => 'Welcome to the Admin Panel',
            
         ];
-
-        $this->emailService->sendMail($admin, $data);
+        //dd( $admin);
+        $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
+       // $this->adminEmailService->configureMailer($admin, $emailTemplate);
+        $this->emailService->sendMail($admin, $emailTemplate);
 
         return redirect()->back()->with('success', 'Admin Registered Successfully');
     }

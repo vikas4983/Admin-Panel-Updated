@@ -47,7 +47,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     @foreach ($footers as $footer)
                         <li class="nav-item">
-                            @if ($footer->name === 'Faq-Page' || $footer->name === 'Privacy-Policy'|| $footer->name === 'Admin'|| $footer->name === 'abc'|| $footer->name === 'Dashboard'|| $footer->name === 'Home'|| $footer->name === 'Privacy-Policy' )
+                            @if ($footer->name === 'Faq-Page' || $footer->name === 'Privacy-Policy'|| $footer->name === 'Refund Policy'|| $footer->name === 'About Us'|| $footer->name === 'Privacy-Policy' )
                                 <a class="nav-link active" aria-current="page" href="{{ $footer->url }}"><span
                                         style="color: white">{{ $footer->name }}</span></a>
                             @endif

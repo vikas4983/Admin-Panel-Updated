@@ -17,7 +17,8 @@
             
             <div class="card card-default">
                 <div class="card-header">
-                    {{$cmsPage->content}}
+                    {!! $cmsPage->content !!}
+                    
                 </div>
             </div>
             
@@ -25,3 +26,60 @@
     </div>
 
 @endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -98,7 +98,8 @@
                                         <td><x-status-component :status="$cmspage->status" />{{ $cmspage->name }}</td>
                                         <td>{{ $cmspage->slug }}</td>
                                         <td>{{ $cmspage->title }}</td>
-                                        <td>{{ $cmspage->content }}</td>
+                                        <td>{{ Str::limit($cmspage->content, 20) }}</td>
+
                                     </tr>
                                     @php
                                         $count++;

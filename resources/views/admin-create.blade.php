@@ -108,7 +108,8 @@
                             @endif
 
                             <form action="{{ route('admins.store') }}" method="post" enctype="multipart/form-data">
-                                @csrf
+                                 @csrf
+                                 <input type="hidden" name="Registration" id="Registration" value="Registration">
                                 <div class="row">
                                     <div class="form-group col-md-12 mb-4">
                                         <input type="file" name="image" class=" form-control input-lg"
@@ -180,7 +181,7 @@
                                                                             <input type="radio" id="customRadio1"
                                                                                 name="status"
                                                                                 class="custom-control-input"
-                                                                                value="1">
+                                                                                value="0">
                                                                             <label class="custom-control-label"
                                                                                 for="customRadio1">Active</label>
                                                                         </div>

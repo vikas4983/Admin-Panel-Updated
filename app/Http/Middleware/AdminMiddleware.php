@@ -20,7 +20,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('admin-login'); // Redirect to login page if not authenticated
+            return redirect('admin-login'); // Redirect to login page if not authenticated
         }
 
         return $next($request);

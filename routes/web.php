@@ -132,9 +132,13 @@ Route::get('send-email', [EmailController::class,'loginWithOTP']);
     Route::post('resend-otp', [MobileLoginController::class, 'resendOTP']);
     Route::get('verify-otp-form', [MobileLoginController::class, 'showForm']);
     Route::post('forgot-password', [MobileLoginController::class, 'forgetOTP']);
+    // verify account
+    Route::post('verify-account', [AdminController::class, 'verifyAccount']);
+
 });
 // Validate with Email & Password
 Route::post('admin-validate', [AdminController::class, 'login']);
+Route::resource('admins', AdminController::class);
 // Validate with Otp
 Route::post('verify-otp', [MobileLoginController::class, 'verifyOtp']);
 Route::post('verify-otp-forgot-password', [MobileLoginController::class, 'verifyOtpForgotPassword']);
@@ -147,7 +151,7 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
-    Route::resource('admins', AdminController::class);
+    
     Route::view('/banners', 'banners');
     Route::resource('countries', CountryController::class);
     Route::resource('states', StateController::class);
