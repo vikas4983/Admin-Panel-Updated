@@ -57,39 +57,26 @@
                                     @php
                                         $count = ($headers->currentPage() - 1) * $headers->perPage() + 1;
                                     @endphp
-                                    
+
                                     @foreach ($headers as $header)
                                         <tr>
-                                            <td>{{ $count }}</td>
-                                            <td><input type="checkbox" class="selectCheckbox" name="selectedHeadersIds[]"
+                                            <td style="width: 15px">{{ $count }}</td>
+                                            <td style="width: 15px">
+                                                <input type="checkbox" class="selectCheckbox" name="selectedHeadersIds[]"
                                                     value="{{ $header->id }}"></td>
-                                            <td>
+                                            <td class="d-flex flex-row">
                                                 <x-action-button destroyRoute="{{ route('menus.destroy', $header->id) }}"
                                                     editRoute="{{ route('menus.edit', $header->id) }}" id="$header->id"
                                                     entityType="'headers'">
                                                 </x-action-button>
-                                                <a href="{{ route('menus.show', $header->id) }}" class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i class="fa fa-eye"
-                                                        style="color:#04C7E0"></i></a>
+                                                <a href="{{ route('menus.show', $header->id) }}"
+                                                    class="mr-1 mb-3 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i
+                                                        class="fa fa-eye" style="color:#04C7E0"></i></a>
                                             </td>
-                                            {{-- <td>{{ $image }}</td> --}}
-                                            {{-- <td> @if ($menu->status === 'Active')
-                                              <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($menu->status === 'Inactive')
-                                               <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif --}}
-                                            <td><x-status-component :status="$header->status" />
-                                                {{ $header->name }}</td>
-                                            {{-- <td>
-                                                {{ $menu->url }}</td> --}}
-
-                                            {{-- <td>
-                                            @if ($menu->status === 'Active')
-                                              <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($menu->status === 'Inactive')
-                                               <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif
-                                        </td> --}}
-
+                                            <td>
+                                                <x-status-component :status="$header->status" />
+                                                {{ $header->name }}
+                                            </td>
                                         </tr>
                                         @php
                                             $count++;
@@ -141,8 +128,9 @@
                                                     editRoute="{{ route('menus.edit', $footer->id) }}" id="$footer->id"
                                                     entityType="'footers'">
                                                 </x-action-button>
-                                                <a href="{{ route('menus.show', $footer->id) }}" class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i class="fa fa-eye "
-                                                        style="color:#04C7E0"></i></a>
+                                                <a href="{{ route('menus.show', $footer->id) }}"
+                                                    class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i
+                                                        class="fa fa-eye " style="color:#04C7E0"></i></a>
                                             </td>
                                             {{-- <td>{{ $image }}</td> --}}
                                             {{-- <td> @if ($menu->status === 'Active')

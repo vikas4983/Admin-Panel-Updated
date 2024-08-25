@@ -53,18 +53,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("deleteForm").submit();
     }
 
-
-    
-    //===CMS===//==CMS===//==CMS====//===CMS===//===CMS====//==CMS==//==CMS====//====CMS===//====CMS======//===CMS=====
+    // CMS
     // For Active CMS
     function activeSelectedItems() {
         var selectedIds = getSelectedIds();
         console.log(selectedIds);
 
-        // Set the selected IDs to the hidden input field
         document.getElementById("cmsActiveSelectedIds").value =
             selectedIds.join(",");
-        // Submit the form
         document.getElementById("activeBtnForm").submit();
     }
     activeBtn.addEventListener("click", function () {
@@ -96,14 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-
-
-    //=====USER===========USER===========USER===========USER===========USER======
-    
-    
-    
-    
+    // USER
     // For Delete User
     function deleteSelectedItems() {
         // For CMS
@@ -135,8 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // For Favicon
         var selectedDeleteFaviconIds = getSelectedIds();
 
-        console.log(selectedDeleteAdminIds);
-        
         // For CMS Hidden Input Field
         document.getElementById("selectedDeleteCMSIds").value =
             selectedDeleteCMSIds.join(",");
@@ -180,17 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("selectedDeleteFaviconIds").value =
             selectedDeleteFaviconIds.join(",");
 
-        // Submit the form
         document.getElementById("deleteForm").submit();
     }
-
-
-
-
-
-
-
-
 
     // For Active User
     function activeSelectedItems() {
@@ -280,12 +258,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-
-
-
-
-
     // For InActive User
     function inActiveSelectedItems() {
         // For CMS
@@ -316,8 +288,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var selectedInactiveLogoIds = getSelectedIds();
         // For Favicon
         var selectedInactiveFaviconIds = getSelectedIds();
-        
-        
+
+
         // For Console
         console.log(selectedInactiveCountryIds);
 
