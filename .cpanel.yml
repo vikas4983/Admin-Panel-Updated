@@ -2,3 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home2/mangaztt/laravel.mangalmandap.com/
+    - /bin/cp index.html $DEPLOYPATH
+    - /bin/cp style.css $DEPLOYPATH
