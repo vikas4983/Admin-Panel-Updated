@@ -1,0 +1,4 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/mangaztt/laravel.mangalmandap.com/
