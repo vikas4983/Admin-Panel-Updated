@@ -42,45 +42,36 @@ class UserController extends Controller
         $active = User::where('status', 1)->count();
         $inActive = User::where('status', 0)->count();
         $countAll = User::count();
-        $paidUsers = count($this->paidUsers());
+        $premiumUsersCount = count($this->paidUsers());
+        $profilePrefixs = $this->profilePrefix();
+        $paidUsers = $this->paidUsers();
+        $spotlightUsers = $this->spotlightUsers();
+
         $users = User::with(['payments' => function ($query) {
-            $query->orderBy('created_at', 'desc'); // Get the latest payment
+            $query->orderBy('created_at', 'desc'); 
         }])->where('status', 1)->orderBy('created_at', 'desc')->get();
 
         if ($request->paidUsers) {
-            $spotlightUsers = $this->spotlightUsers();
-            $paidUsers = $this->paidUsers();
-            $profilePrefixs = $this->profilePrefix();
-            // $premiumUsers = User::with('payments', function ($query) {
-            //     $query->orderBy('is_paid', 1);
-            // })->count();
-            $this->paidUsersCount(User::class, $urlName);
-            return view('admin.users.index', compact('paidUsers', 'profilePrefixs','active', 'inActive', 'countAll'));
+            $this->paidUsersCount(User::class, $urlName, $premiumUsersCount);
+            return view('admin.users.index', compact('paidUsers', 'premiumUsersCount', 'profilePrefixs', 'active', 'inActive', 'countAll'));
         }
         if ($request->activeUsers) {
-            $paidUsers = $this->paidUsers();
             $activeUsers = $this->activeUsers();
-            $profilePrefixs = $this->profilePrefix();
-            $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
             $this->activeUsersCount(User::class, $urlName, $active);
-            return view('admin.users.index', compact('activeUsers', 'profilePrefixs', 'premiumUsers', 'active', 'inActive', 'countAll'));
+            return view('admin.users.index', compact('activeUsers', 'profilePrefixs', 'premiumUsersCount', 'active', 'inActive', 'countAll'));
         }
         if ($request->inactiveUsers) {
             $inActiveUsers = $this->inActiveUsers();
-            $profilePrefixs = $this->profilePrefix();
-            $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
-
             $this->inActiveUsersCount(User::class, $urlName, $inActive);
-            return view('admin.users.index', compact('inActiveUsers', 'profilePrefixs', 'premiumUsers', 'active', 'inActive', 'countAll'));
+            return view('admin.users.index', compact('inActiveUsers', 'profilePrefixs', 'premiumUsersCount', 'active', 'inActive', 'countAll'));
         }
         $users = User::with(['payments', 'approvals', 'successStories'])
             ->orderByDesc('created_at')
             ->paginate(10);
 
         $count = ($users->currentPage() - 1) * $users->perPage();
-        $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
         $this->indexCount(User::class, $urlName);
-        return view('admin.users.index', compact('users', 'paidUsers', 'premiumUsers', 'active', 'inActive', 'countAll'));
+        return view('admin.users.index', compact('users', 'paidUsers', 'premiumUsersCount', 'active', 'inActive', 'countAll'));
     }
 
 

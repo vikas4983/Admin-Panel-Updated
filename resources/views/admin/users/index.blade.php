@@ -39,7 +39,7 @@
                                         <i class="mdi mdi-chess-queen" style="color:#FD5190"></i>
                                     </div>
                                     <div class="text-left">
-                                        <span class="h2 d-block text-white">{{$premiumUsers ?? ''}}</span>
+                                        <span class="h2 d-block text-white">{{$premiumUsersCount ?? ''}}</span>
                                         <p class="text-white">Premium Users</p>
                                     </div>
                                 </div>

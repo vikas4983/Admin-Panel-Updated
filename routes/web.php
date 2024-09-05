@@ -27,7 +27,6 @@
 //     })->name('dashboard');
 // });
 
-//=================================================================================================
 
 
 use App\Http\Controllers\admin\countries\CityController;
@@ -100,29 +99,10 @@ Route::get('abc', function () {
     Auth::guard('admin')->logout();
     return view('admin-login');
 });
-
-Route::get('lagoutC', function () {
-    Auth::logout();
-    return view('login');
-});
-
-
-Route::get('env-test', function () {
-    return [
-        'SMS_API_ID' => env('SMS_API_ID'),
-        'SMS_API_PASSWORD' => env('SMS_API_PASSWORD')
-    ];
-});
-
-
-
-
-
-
-Route::get('send-email', [EmailController::class,'loginWithOTP']);
+Route::get('send-email', [EmailController::class, 'loginWithOTP']);
 
 // Admin Login with email & Password
-    Route::middleware('admin.redirect')->group(function () {
+Route::middleware('admin.redirect')->group(function () {
     Route::view('admin-login', 'admin-login')->name('admin-login');
     Route::view('admin-create', 'admin-create')->name('admin-create');
 
@@ -136,7 +116,6 @@ Route::get('send-email', [EmailController::class,'loginWithOTP']);
     Route::post('forgot-password', [MobileLoginController::class, 'forgetOTP']);
     // verify account
     Route::post('verify-account', [AdminController::class, 'verifyAccount']);
-
 });
 // Validate with Email & Password
 Route::post('admin-validate', [AdminController::class, 'login']);
@@ -147,7 +126,8 @@ Route::post('verify-otp-forgot-password', [MobileLoginController::class, 'verify
 Route::get('verify-otp-forgot-password', [MobileLoginController::class, 'showVerifyOtpForm']);
 Route::post('admin-change-password', [MobileLoginController::class, 'changePassword']);
 
- Route::prefix('admin')->middleware(['admin'])->group(function () {
+
+Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
@@ -183,14 +163,11 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
     Route::resource('emailTemplates', EmailTemplateController::class);
     Route::resource('modelCounts', ModelCountController::class);
     Route::resource('adminMenus', AdminMenuController::class);
-
-
-    // CMS Delete,Active,InActive  Route
+// CMS Delete,Active,InActive  Route
     Route::post('cms-destroy', [CmsPageController::class, 'checkBoxDelete']);
     Route::post('cms-active', [CmsPageController::class, 'activeItem']);
     Route::post('cms-inActive', [CmsPageController::class, 'inActiveItem']);
-
-    //  User Active InActive Delete Route
+//  User Active InActive Delete Route
     // Route::post('admin-destroy', [UserController::class, 'checkBoxDelete']);
     // Route::post('admin-active', [UserController::class, 'activeItem']);
     // Route::post('admin-inActive', [UserController::class, 'inActiveItem']);
@@ -255,11 +232,13 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
     Route::post('profileids-destroy', [MenuController::class, 'checkBoxDelete']);
     Route::post('profileids-active', [MenuController::class, 'activeItem']);
     Route::post('profileids-inActive', [MenuController::class, 'inActiveItem']);
-
     // RazorPay
     Route::get('razorpay-payment', [RazorpayPaymentController::class, 'index']);
     Route::post('razorpay-payment', [RazorpayPaymentController::class, 'store'])->name('razorpay.payment.store');
 });
+
+
+
 
 Route::get('/', function () {
     if (Auth::user()) {
@@ -267,15 +246,15 @@ Route::get('/', function () {
     }
     return view('auth.login');
 });
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-Route::get('/dashboard', function () {
-    return "User dashboard";
-})->name('dashboard');
-//});
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return "User dashboard";
+    })->name('dashboard');
+});
 
 // LoginWithOTP
 Route::get('loginWithOTP', function () {

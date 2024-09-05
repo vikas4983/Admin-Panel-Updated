@@ -47,8 +47,7 @@ class AdminController extends Controller
            $admin = Admin::where('status', 1)->first();
          
            if(!$admin){
-           // dd('stop');
-            return redirect('admin-login')->with('error', 'Verify your account first, Contact with Admin!');
+          return redirect('admin-login')->with('error', 'Verify your account first, Contact with Admin!');
            }
         if (Auth::guard('admin')->attempt($credentials)) {
             return redirect('admin/dashboard')->with('success', 'Logged in successfully!');
@@ -72,8 +71,7 @@ class AdminController extends Controller
         $lastSegment = end($segments);
         $urlName = '/' . $lastSegment;
         $this->indexCount(Admin::class, $urlName);
-       // dd($urlName);
-        return view('admin.admins.index', compact('admins'));
+       return view('admin.admins.index', compact('admins'));
         } else {
             return redirect()->back()->with('erroe', "Something went wrong!");
         }
@@ -109,7 +107,7 @@ class AdminController extends Controller
             'subject' => 'Welcome to the Admin Panel',
            
         ];
-        //dd( $admin);
+       
         $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
        // $this->adminEmailService->configureMailer($admin, $emailTemplate);
         $this->emailService->sendMail($admin, $emailTemplate);
@@ -119,8 +117,7 @@ class AdminController extends Controller
 
     public function logout()
     {
-
-        Auth::guard('admin')->logout();
+         Auth::guard('admin')->logout();
         return redirect()->route('admin.logout');
     }
 
