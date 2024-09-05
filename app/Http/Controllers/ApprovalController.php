@@ -11,11 +11,14 @@ use App\Traits\ProfileTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\ModelCountsTrait;
 
 
 
 class ApprovalController extends Controller
 {
+    use ModelCountsTrait;
+
    use ProfileTrait;
     /**
      * Display a listing of the resource.
@@ -25,14 +28,15 @@ class ApprovalController extends Controller
         //dd($request->all());
         $approvals = Approval::with([
             'user.payments',
-            'user.successStories', // Make sure 'successStories' is the correct relationship name
-            // Make sure 'successStories' is the correct relationship name
-            
-        ])->orderByDesc('created_at')->paginate(10);
+            'user.successStories',])->orderByDesc('created_at')->paginate(10);
         $planStatus = $this->planStatus(); // Get the plan status
         $premiumStatus = $this->premium(); // Call the premium method
         $profilePrefixes = $this->profilePrefix();
-
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(Approval::class, $urlName);
         return view('admin.approvals.index', compact('approvals', 'planStatus', 'premiumStatus', 'profilePrefixes'));
     }
 

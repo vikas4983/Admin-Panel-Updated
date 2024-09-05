@@ -73,11 +73,11 @@
                             <label class="custom-control-label" for="customRadio2">InActive</label>
                         </div>
 
-                    {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
-                    <x-submit-button-component 
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    {{-- <x-submit-button-component 
                       buttonStyle="$buttonStyle->buttonStyle"
                       content="Create City"
-                      />
+                      /> --}}
                 </form>
             </div>
         </div>

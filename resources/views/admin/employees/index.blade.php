@@ -34,21 +34,7 @@
 
             <div class="card card-default">
                 <div class="card-header">
-                    {{-- @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @elseif (session('danger'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('danger') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif --}}
-
-
-
-                    @if (count($employees) > 0)
+                   @if (count($employees) > 0)
                         <table class="table table-striped" id="employees" class="display nowrap" width="100%">
 
                             <thead>
@@ -57,7 +43,7 @@
                                     <th scope="col"><input type="checkbox" id="selectAllCheckbox"></th>
                                     <th scope="col">Action</th>
                                     <th scope="col">Employee Type</th>
-                                    {{-- <th scope="col">Status</th> --}}
+                                   
                                     
                                 </tr>
                             </thead>
@@ -72,29 +58,16 @@
                                         <td><input type="checkbox" class="selectCheckbox" name="selectedIds[]"
                                                 value="{{ $employee->id }}"></td>
                                         <td>
-                                            <x-action-button destroyRoute="{{ route('employees.destroy', $employee->id) }}"
-                                                editRoute="{{ route('employees.edit', $employee->id) }}" id="$employee->id"
-                                                entityType="'employee'">
-                                            </x-action-button>
+                                            <div class="d-flex flex-row">
+                                                <x-edit-action-button-component :editRoute="route('employees.edit', $employee->id)" :id="$employee->id" />
+                                                <x-destroy-action-button-component :destroyRoute="route('employees.destroy', $employee->id)" :id="$employee->id" />
+                                            </div>
 
                                         </td>
                                         <td>
-                                            {{-- @if ($employee->status === 'Active')
-                                                <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($employee->status === 'Inactive')
-                                                <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif --}}
-                                            <x-status-component :status="$employee->status" />{{ $employee->employee }}
+                                           <x-status-component :status="$employee->status" />{{ $employee->employee }}
                                         </td>
-                                        {{-- <td>
-                                            @if ($employee->status === 'Active')
-                                                <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($employee->status === 'Inactive')
-                                                <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif
-                                        </td> --}}
-
-                                    </tr>
+                                   </tr>
                                     @php
                                         $count++;
                                     @endphp

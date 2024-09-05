@@ -33,85 +33,14 @@
                         </x-create-button-component></span>
                 </div>
             </div>
-            {{-- <th scope="col"><input type="checkbox" id="selectAllCheckbox">all</th>
-            @foreach ($banners as $banner)
-                <input type="checkbox" class="selectCheckbox1" name="selectedIds1[]" value="{{ $banner->id }}">vikas
-            @endforeach
-
-            <script>
-                // Get all checkboxes with the class selectCheckbox1
-                var checkboxes = document.querySelectorAll(".selectCheckbox1");
-                var selectAllCheckboxes = document.querySelector('#selectAllCheckbox');
-
-
-                selectAllCheckboxes.addEventListener("click", function() {
-                    checkboxes.forEach(function(checkbox) {
-                        checkbox.checked = selectAllCheckboxes.checked;
-                        console.log(checkbox);
-                    });
-                    getSelectedIds();
-                });
-
-                // Add event listeners to each checkbox
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.addEventListener('change', function() {
-                        getSelectedIds(); // Call the function whenever a checkbox is clicked
-                    });
-                });
-
-
-
-
-                function getSelectedIds() {
-                    var selectedIds = [];
-                    checkboxes.forEach(function(checkbox) {
-                        if (checkbox.checked) {
-                            selectedIds.push(checkbox.value);
-                        }
-                    });
-
-                    console.log(selectedIds); // Log the array of selected checkbox values to the console
-                    return selectedIds; // Return the array if you need it for further processing
-                }
-            </script> --}}
             <div class="card card-default">
                 <div class="card-header">
-                    {{-- @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @elseif (session('danger'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('danger') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif --}}
-
-
-
                     @if (count($banners) > 0)
                         <table class="table table-striped" id="employees" class="display nowrap" width="100%">
 
                             <thead>
-                                {{-- <tr>
-                                    <th scope="col"># </th>
-                                    <th scope="col"><input type="checkbox" id="selectAllCheckbox"></th>
-                                    <th scope="col">Action</th>
-                                    <th scope="col">Banner</th>
-</tr> --}}
                             </thead>
-
                             <tbody>
-
-                                {{-- @php
-                                    $count = ($banners->currentPage() - 1) * $banners->perPage() + 1;
-                                @endphp --}}
-                                {{-- <button type="button" class="mb-3 btn btn-lg btn-btn-primary">
-                                    <a href="{{ route('banners.create') }}"> <i class=" mdi mdi-star-outline"></i> New
-                                        Banner
-                                    </a>
-                                </button> --}}
                                 <button type="button" class="mb-3 btn btn-lg btn-outline-primary" data-toggle="modal"
                                     data-target="#exampleModalForm"><i class="mdi mdi-star-outline"></i> New Banner
                                 </button>
@@ -202,22 +131,9 @@
                                 Control + f5 if banner not
                                 reflecting after upload.. </p>
                             <div class="d-flex justify-content-center">
-                                <!-- Wrap all buttons in a div -->
-                                {{-- <input type="checkbox" class="selectCheckbox mr-3" name="selectedIds[]"
-                                    value="{{ $banner->id }}" width="50px" height="50px"></td> --}}
-                                {{-- <a href="{{ route('banners.create') }}" class="mr-1 btn btn-outline-primary"><i
-                                        class="fa fa-add"></i></a> --}}
-                                <a href="{{ route('banners.edit', $banner->id) }}"
-                                    class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i
-                                        class="fa fa-edit"></i></a>
-                                <form action="{{ route('banners.destroy', $banner->id) }}" method="POST"
-                                    class="mt-1">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="DeleteFunction();"
-                                        class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"><i
-                                            class="fa fa-trash" style="color: red"></i></button>
-                                </form>
+                                <x-edit-action-button-component :editRoute="route('banners.edit', $banner->id)" :id="$banner->id" />
+                                <x-destroy-action-button-component :destroyRoute="route('banners.destroy', $banner->id)" :id="$banner->id" />
+                       
                             </div>
                         </div>
                     </div>
@@ -242,42 +158,5 @@
 
 @endsection
 @section('scripts')
-
-
-    {{-- <script>
-        document.getElementById("selectAll").addEventListener("change", function() {
-        var checkboxes = document.getElementsByClassName("checkbox");
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = this.checked;
-            console.log(checkboxes[i]);
-        }
-    });
-
-    var checkboxes = document.getElementsByClassName("checkbox");
-    for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].addEventListener("change", function() {
-            var allChecked = true;
-            for (var j = 0; j < checkboxes.length; j++) {
-                console.log(checkboxes[j]);
-                if (!checkboxes[j].checked) {
-                    allChecked = false;
-                    break;
-                     
-                }
-            }
-            document.getElementById("selectAll").checked = allChecked;
-        });
-    }
-
-    </script> --}}
-
-
-    {{-- <script src="{{ asset('assets/auth/plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js') }}"></script>
-     <script>
-        $(document).ready(function() {
-            $('#employees').DataTable();
-            $(".dataTables_wrapper").css("width", "100%");
-        });
-     </script> --}}
 
 @endsection

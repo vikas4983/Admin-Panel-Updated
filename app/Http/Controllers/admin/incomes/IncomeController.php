@@ -7,9 +7,11 @@ use App\Http\Requests\admin\incomes\CreateIncomeRequest;
 use App\Http\Requests\admin\incomes\UpdateIncomeRequest;
 use App\Models\Income;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
 
 class IncomeController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -23,6 +25,11 @@ class IncomeController extends Controller
         $inActive = Income::where('status', 0)->count();
         // All Count
         $countAll = Income::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(Income::class, $urlName);
         return view('admin.incomes.index', compact('incomes','count', 'active', 'inActive', 'countAll'));
     }
 

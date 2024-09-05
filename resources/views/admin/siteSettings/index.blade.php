@@ -16,8 +16,6 @@
     <div class="content-wrapper">
         <div class="content">
             <div class="card card-default">
-                {{-- <h3 class="card-header">
-                Incomes</h3> --}}
                 <div class="card-header">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -25,19 +23,13 @@
                             <li class="breadcrumb-item active" aria-current="page">Site Setting</li>
                         </ol>
                     </nav>
-                    {{-- <span> <x-create-button-component createRoute="{{ url('admin/menus/create') }}"
-                            activeRoute="{{ url('admin/menus-active') }}" deleteAllRoute="{{ url('admin/menus-destroy') }}"
-                            inActiveRoute="{{ url('admin/menus-inActive') }}" countAll="{{ $countAll }}"
-                            active="{{ $active }}" inActive="{{ $inActive }}">
-                        </x-create-button-component></span> --}}
                 </div>
             </div>
 
             <div class="card card-default">
                 <div class="card-header">
                     @if (count($siteSettings) > 0)
-                        {{-- <table class="table " id="menus" class="display nowrap" width="100%"> --}}
-                        <table class="table table-striped">
+                        <table class="table table-striped" id="siteSettings">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -46,12 +38,6 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Title</th>
                                     <th scope="col">Description</th>
-                                    {{-- <th scope="col">Number</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">GAC</th>
-                                    <th scope="col">Footer</th> --}}
-
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,22 +50,15 @@
                                         {{-- <td><input type="checkbox" class="selectCheckbox" name="selectedHeadersIds[]"
                                                     value="{{ $header->id }}"></td> --}}
                                         <td class="action-buttons">
-                                            <x-action-button
-                                                destroyRoute="{{ route('siteSettings.destroy', $siteSetting->id) }}"
-                                                editRoute="{{ route('siteSettings.edit', $siteSetting->id) }}"
-                                                id="$siteSetting->id" entityType="'siteSettings'"
-                                               >
-                                            </x-action-button>
+                                            <div class="d-flex flex-row">
+                                                <button data-toggle="modal" data-target="#exampleModalForm"
+                                                    class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle">
+                                                    <i class="fa fa-eye" style="color:#04C7E0"></i>
+                                                </button>
 
-                                           
-
-                                            {{-- <a href="{{ route('siteSettings.show', $siteSetting->id) }}"><i class="fa fa-eye"
-                                                        style="color:#04C7E0"></i></a> --}}
-                                            <button data-toggle="modal" data-target="#exampleModalForm"
-                                                class="mr-1 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle">
-                                                <i class="fa fa-eye" style="color:#04C7E0"></i>
-                                            </button>
-
+                                                <x-edit-action-button-component :editRoute="route('siteSettings.edit', $siteSetting->id)" :id="$siteSetting->id" />
+                                                <x-destroy-action-button-component :destroyRoute="route('siteSettings.destroy', $siteSetting->id)" :id="$siteSetting->id" />
+                                            </div>
                                             <div class="modal fade" id="exampleModalForm" tabindex="-1" role="dialog"
                                                 aria-labelledby="exampleModalFormTitle" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
@@ -156,10 +135,7 @@
                                             {{ $siteSetting->name }}</td>
                                         <td>{{ Str::limit($siteSetting->title, 15) }}</td>
                                         <td>{{ Str::limit($siteSetting->description, 15) }}</td>
-                                        {{-- <td>{{ Str::limit($siteSetting->number, 13) }}</td>
-                                        <td>{{ Str::limit($siteSetting->email, 50) }}</td>
-                                        <td>{{ Str::limit($siteSetting->google_analytics_code, 50) }}</td>
-                                        <td>{{ Str::limit($siteSetting->footer, 15) }}</td> --}}
+
                                     </tr>
                                     @php
                                         $count++;
@@ -180,4 +156,13 @@
         </div>
     </div>
     <script></script>
+@endsection
+@section('scripts')
+    <script src="{{ asset('assets/auth/plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#siteSettings').DataTable();
+            $(".dataTables_wrapper").css("width", "100%");
+        });
+    </script>
 @endsection

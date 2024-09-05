@@ -7,9 +7,13 @@ use App\Models\Favicon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use App\Traits\ModelCountsTrait;
+
 
 class LogoFaviconController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -24,6 +28,12 @@ class LogoFaviconController extends Controller
         $inActive = Logo::where('status', 0)->count();
         // All Logos
         $countAll = Logo::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(Logo::class, $urlName);
         return view('admin.logos.index', compact('logos', 'favicons','countLogo',  'active', 'inActive', 'countAll'));
     }
 

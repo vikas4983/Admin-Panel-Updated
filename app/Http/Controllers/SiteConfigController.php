@@ -6,9 +6,12 @@ use App\Http\Requests\CreateSiteConfigRequest;
 use App\Http\Requests\UpdateSiteConfigRequest;
 use App\Models\SiteConfig;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class SiteConfigController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -21,6 +24,12 @@ class SiteConfigController extends Controller
         //     $inActive = Menu::where('status', 0)->count();
         //     // All Count
         //     $countAll = Menu::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(SiteConfig::class, $urlName);
         return view('admin.siteConfigs.index', compact('siteConfigs'));
     }
 

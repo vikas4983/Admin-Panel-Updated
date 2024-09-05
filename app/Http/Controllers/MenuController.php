@@ -6,9 +6,14 @@ use App\Http\Requests\CreateMenuRequest;
 use App\Http\Requests\UpdateMenuRequest;
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class MenuController extends Controller
 {
+    use ModelCountsTrait;
+
+    
     /**
      * Display a listing of the resource.
      */
@@ -26,6 +31,12 @@ class MenuController extends Controller
         $inActive = Menu::where('status', 0)->count();
         // All Count
         $countAll = Menu::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+       
+        $this->indexCount(Menu::class, $urlName);
         return view('admin.menus.index', compact('menus', 'active', 'inActive', 'countAll', 'headers', 'footers'));
     }
 

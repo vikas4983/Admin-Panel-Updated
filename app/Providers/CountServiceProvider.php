@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Admin;
+use App\Models\AdminMenu;
 use App\Models\Approval;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +19,7 @@ use App\Models\Favicon;
 use App\Models\Income;
 use App\Models\Logo;
 use App\Models\Menu;
+use App\Models\ModelCount;
 use App\Models\Occupation;
 use App\Models\Payment;
 use App\Models\PaymentGateway;
@@ -29,9 +31,11 @@ use App\Models\SiteConfig;
 use App\Models\SiteSetting;
 use App\Models\SpoteLight;
 use App\Models\SuccessStory;
+use App\Models\TestMenu;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Traits\PaidUsersTrait;
+use Illuminate\Support\Facades\Cache;
 
 class CountServiceProvider extends ServiceProvider
 {
@@ -48,43 +52,13 @@ class CountServiceProvider extends ServiceProvider
      * Bootstrap services.
      */
     public function boot(): void
-    {
-        View::composer('layouts.auth', function ($view) {
-            
-            $counts = [
-                'adminsCount' => Admin::count(),
-                'countriesCount' => Country::count(),
-                'statesCount' => State::count(),
-                'citiesCount' => City::count(),
-                'religionsCount' => Religion::count(),
-                'castesCount' => Caste::count(),
-                'educationsCount' => Education::count(),
-                'employeesCount' => Employee::count(),
-                'occupationsCount' => Occupation::count(),
-                'incomesCount' => Income::count(),
-                'plansCount' => Plan::count(),
-                'cmsPagesCount' => cmsPage::count(),
-                'logosCount' => Logo::count(),
-                'faviconsCount' => Favicon::count(),
-                'bannersCount' => Banner::count(),
-                'menusCount' => Menu::count(),
-                'profileidsCount' => ProfileId::count(),
-                'emailSettingsCount' => EmailSetting::count(),
-                'siteSettingsCount' => SiteSetting::count(),
-                'paymentgatewaysCount' => PaymentGateway::count(),
-                'siteConfigsCount' => SiteConfig::count(),
-                'approvalsCount' => Approval::count(),
-                'successStoriesCount' => SuccessStory::count(),
-                'usersCount' => User::count(),
-                'activeUsersCount' => User::where('status', 1)->count(),
-                'inActiveUsersCount' => User::where('status', 0)->count(),
-                'paidUsersCount' => count($this->paidUsers()),
-                'spotlightCount' => SpoteLight::where('is_spote_light', 1)->count(),
-               
-               
-            ];
-            
-            $view->with('counts', $counts);
-        });
+    { {
+            View::composer(['layouts.auth','admin.dashboard'], function ($view) {
+                $adminMenus = Cache::remember('admin_menus', 60, function () {
+                    return    AdminMenu::with('childrenRecursive')->whereNull('parent_id')->where('status', 1)->get();
+                });
+              $view->with('adminMenus', $adminMenus);
+            });
+        }
     }
 }

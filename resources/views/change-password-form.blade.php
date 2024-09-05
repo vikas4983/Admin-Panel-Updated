@@ -97,53 +97,8 @@
                             </div>
 
                         </div>
-
-
-                        {{-- @dd(session()->has('mobile') ) --}}
-                        <div class="card-body  px-5 pb-5 pt-0">
+<div class="card-body  px-5 pb-5 pt-0">
                             <h1 class="text-dark mb-6 text-center" style="color:red"></h1>
-                            {{-- Display Session Message --}}
-                            {{-- @if ($errors->any())
-                                <div>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            @if ($error == 'The mobile field is required.')
-                                                <li class="text-danger text-center">{{ $error }}</li>
-                                            @else
-                                                <li>{{ $error }}</li>
-                                            @endif
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif --}}
-                            {{-- abc s --}}
-
-                            {{-- @php
-                                if (!function_exists('obfuscateEmailInline')) {
-                                    function obfuscateEmailInline($email)
-                                    {
-                                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                            return $email; // Return the original email if it's not valid
-        }
-
-        $emailParts = explode('@', $email);
-        $prefixLength = min(4, strlen($emailParts[0])); // Ensure prefix length does not exceed the length of the email part
-        $emailPrefix = substr($emailParts[0], 0, $prefixLength); // Take up to the first 4 characters
-        $hiddenLength = max(0, strlen($emailParts[0]) - $prefixLength); // Ensure hidden length is non-negative
-        return $emailPrefix . str_repeat('*', $hiddenLength) . '@' . $emailParts[1];
-    }
-}
-
-if (!function_exists('obfuscateMobileInline')) {
-    function obfuscateMobileInline($mobile)
-    {
-        $visibleLength = 4;
-        $hiddenLength = max(0, strlen($mobile) - $visibleLength); // Ensure hidden length is non-negative
-        return str_repeat('*', $hiddenLength) . substr($mobile, -$visibleLength); // Keep last 4 characters
-                                    }
-                                }
-                            @endphp --}}
-                            {{-- Display Bostrap Message --}}
                             <div id="alert-container-resend" class="mt-3"></div>
                             @if (isset($success))
                                 <div id="send-otp-success" class="alert alert-success mt-1">
@@ -161,19 +116,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                     </button>
                                 </div>
                             @endif
-                            {{-- <div class="text-center">
-
-                                <p>OTP has been sent to</p>
-                                <p>+91{{ obfuscateMobileInline($admin->mobile ?? '') }}</p>
-                                <p>{{ obfuscateEmailInline($admin->email ?? '') }}</p>
-
-                            </div> --}}
-
-                            {{-- @else --}}
-                            {{-- <p>Session has expired. Please <a href="{{ route('admin-login') }}">go back to
-                                        login</a> and try again.</p> --}}
-                            {{-- @endif --}}
-                            <form action="{{ url('admin-change-password') }}" method="post">
+                           <form action="{{ url('admin-change-password') }}" method="post">
                                 @csrf
                                 <div class="row d-flex justify-content-center mt-1">
                                     <div class="form-group col-lg-12">
@@ -204,7 +147,7 @@ if (!function_exists('obfuscateMobileInline')) {
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-center mt-5">
                                             <button type="submit" class="btn btn-primary btn-pill">
-                                                Change Password
+                                                Set Password
                                             </button>
                                         </div>
                                     </div>

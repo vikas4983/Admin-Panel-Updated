@@ -16,8 +16,6 @@
     <div class="content-wrapper">
         <div class="content">
             <div class="card card-default">
-                {{-- <h3 class="card-header">
-                Incomes</h3> --}}
                 <div class="card-header">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -36,20 +34,14 @@
 
             <div class="card card-default ">
                 <div class="card-header">
-
                     @if (count($profileIds) > 0)
-                        {{-- <table class="table " id="profileIds" class="display nowrap" width="100%"> --}}
-                        <table class="table table-striped">
+                        <table class="table table-striped" id="profileIds">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    {{-- <th scope="col"><input type="checkbox" id="allCheckbox"></th> --}}
+
                                     <th scope="col">Action</th>
                                     <th scope="col">Profile Id Name</th>
-                                    {{-- <th scope="col">Url</th> --}}
-
-                                    {{-- <th scope="col">Status</th> --}}
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,17 +51,11 @@
                                 @foreach ($profileIds as $profileId)
                                     <tr>
                                         <td>{{ $count }}</td>
-                                        {{-- <td><input type="checkbox" class="selectCheckbox" name="selectedHeadersIds[]"
-                                                    value="{{ $header->id }}"></td>
-                                            <> --}}
                                         <td><x-action-button
                                                 destroyRoute="{{ route('profileids.destroy', $profileId->id) }}"
                                                 editRoute="{{ route('profileids.edit', $profileId->id) }}"
                                                 id="$profileId->id" entityType="'profileids'">
                                             </x-action-button></td>
-                                        {{-- <a href="{{ route('profileIds.show', $header->id) }}"><i class="fa fa-eye"
-                                                        style="color:#04C7E0"></i></a> --}}
-
                                         <td><x-status-component :status="$profileId->status" />
                                             {{ $profileId->name }}</td>
                                     </tr>
@@ -93,4 +79,13 @@
             </div>
         </div>
         <script></script>
+    @endsection
+    @section('scripts')
+        <script src="{{ asset('assets/auth/plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#profileIds').DataTable();
+                $(".dataTables_wrapper").css("width", "100%");
+            });
+        </script>
     @endsection

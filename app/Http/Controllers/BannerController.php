@@ -7,9 +7,13 @@ use App\Models\Banner;
 use App\Models\cmsPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use App\Traits\ModelCountsTrait;
+
 
 class BannerController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -23,6 +27,12 @@ class BannerController extends Controller
         $inActive = Banner::where('status', 0)->count();
         // All Logos
         $countAll = Banner::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(Banner::class, $urlName);
         return view('admin.banners.index', compact('banners', 'active', 'inActive', 'countAll'));
     }
 

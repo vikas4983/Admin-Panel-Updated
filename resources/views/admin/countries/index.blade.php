@@ -57,12 +57,10 @@
                                         <td><input type="checkbox" class="selectCheckbox" name="selectedIds[]"
                                                 value="{{ $country->id }}"></td>
                                         <td>
-                                            {{-- <x-action-button destroy="countries.destroy" edit="countries.edit" :country="$country">
-                            </x-action-button> --}}
-                                            <x-action-button destroyRoute="{{ route('countries.destroy', $country->id) }}"
-                                                editRoute="{{ route('countries.edit', $country->id) }}" id="$country->id"
-                                                entityType="'country'">
-                                            </x-action-button>
+                                          <div class="d-flex flex-row">
+                                                <x-edit-action-button-component :editRoute="route('countries.edit', $country->id)" :id="$country->id" />
+                                                <x-destroy-action-button-component :destroyRoute="route('countries.destroy', $country->id)" :id="$country->id" />
+                                            </div>
                                         </td>
                                         {{-- <td> @if ($country->status === 'Active')
                                                 <i class="mdi mdi-record" style="color: green"></i>

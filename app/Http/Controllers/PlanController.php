@@ -8,9 +8,13 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\ModelCountsTrait;
+
 
 class PlanController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +28,12 @@ class PlanController extends Controller
         $inActive = Plan::where('status', 0)->count();
         // All Count
         $countAll = Plan::count();
-
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        //dd($urlName);
+        $this->indexCount(Plan::class, $urlName);
 
 
         return view('admin.plans.index', compact('plans', 'count', 'active', 'inActive', 'countAll'));

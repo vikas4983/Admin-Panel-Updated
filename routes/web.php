@@ -67,7 +67,9 @@ use App\Http\Controllers\SuccessStoryController;
 use App\Http\Controllers\TextPaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\admin_auth\MobileLoginController;
+use App\Http\Controllers\AdminMenuController;
 use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\ModelCountController;
 use App\Models\City;
 use App\Models\Email;
 use App\Models\Payment;
@@ -138,20 +140,18 @@ Route::get('send-email', [EmailController::class,'loginWithOTP']);
 });
 // Validate with Email & Password
 Route::post('admin-validate', [AdminController::class, 'login']);
-Route::resource('admins', AdminController::class);
+
 // Validate with Otp
 Route::post('verify-otp', [MobileLoginController::class, 'verifyOtp']);
 Route::post('verify-otp-forgot-password', [MobileLoginController::class, 'verifyOtpForgotPassword']);
 Route::get('verify-otp-forgot-password', [MobileLoginController::class, 'showVerifyOtpForm']);
 Route::post('admin-change-password', [MobileLoginController::class, 'changePassword']);
 
-
-
-    Route::prefix('admin')->middleware(['admin'])->group(function () {
+ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('logout', [AdminController::class, 'logout'])->name('admins.logout');
     Route::get('plan', [PlanController::class, 'plan']);
-    
+    Route::resource('admins', AdminController::class);
     Route::view('/banners', 'banners');
     Route::resource('countries', CountryController::class);
     Route::resource('states', StateController::class);
@@ -181,6 +181,8 @@ Route::post('admin-change-password', [MobileLoginController::class, 'changePassw
     Route::get('user-orders', [UserController::class, 'paidusersorders']);
     Route::resource('paymentgateways', PaymentGatewayController::class);
     Route::resource('emailTemplates', EmailTemplateController::class);
+    Route::resource('modelCounts', ModelCountController::class);
+    Route::resource('adminMenus', AdminMenuController::class);
 
 
     // CMS Delete,Active,InActive  Route

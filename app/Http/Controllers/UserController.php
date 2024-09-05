@@ -17,9 +17,12 @@ use App\Traits\ActiveUsersTrait;
 use App\Traits\InActiveUsersTrait;
 use App\Traits\profileTrait;
 use App\Traits\SpoteLightUsersTrait;
+use App\Traits\ModelCountsTrait;
+
 
 class UserController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -32,68 +35,52 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        $fullUrl = $request->fullUrl();
+        $segments = explode('/', $fullUrl);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $active = User::where('status', 1)->count();
+        $inActive = User::where('status', 0)->count();
+        $countAll = User::count();
         $paidUsers = count($this->paidUsers());
         $users = User::with(['payments' => function ($query) {
             $query->orderBy('created_at', 'desc'); // Get the latest payment
         }])->where('status', 1)->orderBy('created_at', 'desc')->get();
 
-
-
-
         if ($request->paidUsers) {
             $spotlightUsers = $this->spotlightUsers();
             $paidUsers = $this->paidUsers();
             $profilePrefixs = $this->profilePrefix();
-            
-
-            $active = User::where('status', 1)->count();
-            $inActive = User::where('status', 0)->count();
-            $countAll = User::count();
-            $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
-           
-
-            return view('admin.users.index', compact('paidUsers', 'profilePrefixs', 'premiumUsers', 'active', 'inActive', 'countAll'));
+            // $premiumUsers = User::with('payments', function ($query) {
+            //     $query->orderBy('is_paid', 1);
+            // })->count();
+            $this->paidUsersCount(User::class, $urlName);
+            return view('admin.users.index', compact('paidUsers', 'profilePrefixs','active', 'inActive', 'countAll'));
         }
-
-
         if ($request->activeUsers) {
             $paidUsers = $this->paidUsers();
             $activeUsers = $this->activeUsers();
             $profilePrefixs = $this->profilePrefix();
-            
-            $active = User::where('status', 1)->count();
-            $inActive = User::where('status', 0)->count();
-            $countAll = User::count();
             $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
-
-            return view('admin.users.index', compact('activeUsers','profilePrefixs','premiumUsers', 'active', 'inActive', 'countAll'));
+            $this->activeUsersCount(User::class, $urlName, $active);
+            return view('admin.users.index', compact('activeUsers', 'profilePrefixs', 'premiumUsers', 'active', 'inActive', 'countAll'));
         }
-
-        if ($request->inActiveUsers) {
+        if ($request->inactiveUsers) {
             $inActiveUsers = $this->inActiveUsers();
             $profilePrefixs = $this->profilePrefix();
-
-            $active = User::where('status', 1)->count();
-            $inActive = User::where('status', 0)->count();
-            $countAll = User::count();
             $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
 
-            return view('admin.users.index', compact('inActiveUsers','profilePrefixs','premiumUsers', 'active', 'inActive', 'countAll'));
+            $this->inActiveUsersCount(User::class, $urlName, $inActive);
+            return view('admin.users.index', compact('inActiveUsers', 'profilePrefixs', 'premiumUsers', 'active', 'inActive', 'countAll'));
         }
-
-
         $users = User::with(['payments', 'approvals', 'successStories'])
             ->orderByDesc('created_at')
             ->paginate(10);
 
         $count = ($users->currentPage() - 1) * $users->perPage();
-
-        $active = User::where('status', 1)->count();
-        $inActive = User::where('status', 0)->count();
-        $countAll = User::count();
         $premiumUsers = payment::with('user')->where('is_paid', 1)->count();
-
-        return view('admin.users.index', compact('users', 'paidUsers','premiumUsers', 'active', 'inActive', 'countAll'));
+        $this->indexCount(User::class, $urlName);
+        return view('admin.users.index', compact('users', 'paidUsers', 'premiumUsers', 'active', 'inActive', 'countAll'));
     }
 
 
@@ -112,9 +99,14 @@ class UserController extends Controller
     {
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'name' => 'required', 'string', 'max:255',
-            'email' => 'required', 'email', 'max:255',
-            'password' => 'required', 'string|min:8|confirmed',
+            'name' => 'required',
+            'string',
+            'max:255',
+            'email' => 'required',
+            'email',
+            'max:255',
+            'password' => 'required',
+            'string|min:8|confirmed',
         ]);
 
         $file = $request->file('image');
@@ -166,21 +158,12 @@ class UserController extends Controller
      */
     public function update(AdminUpdateRequest $request, $id)
     {
-        // $request->validate([
-        //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-        //     'name' => 'nullable|string|max:255',
-        //     'email' => 'nullable', 'email', 'max:255',
-        //     'password' => 'nullable|string|min:8|confirmed',
-        // ]);
-
         $admin = USer::find($id);
 
         if ($file = $request->file('image')) {
             $fileName = rand(100, 1000) . time() . $file->getClientOriginalName();
             $filePath = public_path('storage/admin/image/');
             $file->move($filePath, $fileName);
-
-            // Assuming $admin is already defined and represents the user you are updating
             $previousFilePath = $filePath . $admin->image;
 
             if (File::exists($previousFilePath)) {
@@ -327,7 +310,7 @@ class UserController extends Controller
         })->with(['payments' => function ($query) {
             $query->where('is_paid', 0);
         }])->withCount('payments')->get();
-         // dd($freeUsersOrders);
+        // dd($freeUsersOrders);
 
         return view('admin.users.orders', compact('orders', 'profilePrefixs', 'freeUsersOrders'));
     }

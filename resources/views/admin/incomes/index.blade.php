@@ -17,9 +17,7 @@
     <div class="content-wrapper">
         <div class="content">
             <div class="card card-default">
-                {{-- <h3 class="card-header">
-                Incomes</h3> --}}
-                <div class="card-header">
+               <div class="card-header">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                              <li class="breadcrumb-item"> <a href="{{ url('dashboard') }}">Home</a> </li>
@@ -37,29 +35,15 @@
             </div>
             <div class="card card-default">
                 <div class="card-header">
-                    {{-- @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @elseif (session('danger'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('danger') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif --}}
-                    @if (count($incomes) > 0)
-                        {{-- <table class="table " id="incomes" class="display nowrap" width="100%"> --}}
-                        <table class="table table-striped">
+                   @if (count($incomes) > 0)
+                       <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
                                      <th scope="col"><input type="checkbox" id="selectAllCheckbox"></th>
                                     <th scope="col">Action</th>
                                     <th scope="col">Income</th>
-                                    {{-- <th scope="col">Status</th> --}}
-                                   
-                                </tr>
+                                 </tr>
                             </thead>
                             <tbody>
                                 @php
@@ -71,20 +55,13 @@
                                          <td><input type="checkbox" class="selectCheckbox" name="selectedIds[]"
                                                 value="{{ $income->id }}"></td>
                                         <td>
-                                            <x-action-button destroyRoute="{{ route('incomes.destroy', $income->id) }}"
-                                                editRoute="{{ route('incomes.edit', $income->id) }}" id="$incomes->id"
-                                                entityType="'incomes'">
-                                            </x-action-button>
+                                            <div class="d-flex flex-row">
+                                                <x-edit-action-button-component :editRoute="route('incomes.edit', $income->id)" :id="$income->id" />
+                                                <x-destroy-action-button-component :destroyRoute="route('incomes.destroy', $income->id)" :id="$income->id" />
+                                            </div>
                                         </td>
                                         <td>
                                           <x-status-component :status="$income->status"/> {{ $income->income }} </td>
-                                        {{-- <td>
-                                            @if ($income->status === 'Active')
-                                              <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($income->status === 'Inactive')
-                                               <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif
-                                        </td> --}}
                                         
                                     </tr>
                                     @php

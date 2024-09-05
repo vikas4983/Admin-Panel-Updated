@@ -6,9 +6,14 @@ use App\Http\Requests\CreateProfileIdRequest;
 use App\Http\Requests\UpdateProfileIdRequest;
 use App\Models\ProfileId;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class ProfileIdController extends Controller
 {
+    use ModelCountsTrait;
+
+    
     /**
      * Display a listing of the resource.
      */
@@ -21,6 +26,12 @@ class ProfileIdController extends Controller
         $inActive = ProfileId::where('status', 0)->count();
         // All Count
         $countAll = ProfileId::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(ProfileId::class, $urlName);
         return view('admin.profileids.index', compact('profileIds', 'active', 'inActive', 'countAll'));
     }
 

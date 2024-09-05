@@ -8,9 +8,11 @@ use App\Http\Requests\admin\countries\UpdateCityRequest;
 use App\Models\City;
 use App\Models\State;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
 
 class CityController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -25,6 +27,12 @@ class CityController extends Controller
         $inActive = City::where('status', 0)->count();
         // All Count
         $countAll = City::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(City::class, $urlName);
+        
         return view('admin.countries.states.cities.index', compact('cities','count', 'active', 'inActive', 'countAll'));
     }
 

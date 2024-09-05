@@ -7,15 +7,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePaymentGatewayRequest;
 use App\Http\Requests\UpdatePaymentGatewayRequest;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class PaymentGatewayController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $paymentGateways= PaymentGateway::all();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(PaymentGateway::class, $urlName);
         return view('admin.paymentgateways.index', compact('paymentGateways'));
     }
 

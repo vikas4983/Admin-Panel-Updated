@@ -5,9 +5,11 @@ namespace App\Http\Controllers\admin\educations;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
 
 class EducationController extends Controller
-{
+{  
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -22,6 +24,12 @@ class EducationController extends Controller
         $inActive = Education::where('status', 0)->count();
         // All Count
         $countAll = Education::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+      
+        $this->indexCount(Education::class, $urlName);
         return view('admin.educations.index', compact('educations', 'count', 'active', 'inActive', 'countAll'));
     }
 

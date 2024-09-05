@@ -24,8 +24,7 @@
                             <li class="breadcrumb-item active" aria-current="page">Education</li>
                         </ol>
                     </nav>
-                     <span> <x-create-button-component 
-                            createRoute="{{ url('admin/educations/create') }}"
+                    <span> <x-create-button-component createRoute="{{ url('admin/educations/create') }}"
                             activeRoute="{{ url('admin/educations-active') }}"
                             deleteAllRoute="{{ url('admin/educations-destroy') }}"
                             inActiveRoute="{{ url('admin/educations-inActive') }}" countAll="{{ $countAll }}"
@@ -35,70 +34,43 @@
             </div>
             <div class="card card-default">
                 <div class="card-header">
-                    {{-- @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @elseif (session('danger'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('danger') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif --}}
-
                     @if (count($educations) > 0)
                         <table class="table table-striped" id="educations" class="display nowrap" width="100%">
                             <thead>
-                               
-                                    <th scope="col">#</th>
-                                    <th scope="col"><input type="checkbox" id="selectAllCheckbox"></th>
-                                    <th scope="col">Action</th>
-                                    <th scope="col">Education</th>
-                                    {{-- <th scope="col">Status</th> --}}
-                                   
-                                
+
+                                <th scope="col">#</th>
+                                <th scope="col"><input type="checkbox" id="selectAllCheckbox"></th>
+                                <th scope="col">Action</th>
+                                <th scope="col">Education</th>
                             </thead>
                             <tbody>
-                                 @php
+                                @php
                                     $count = ($educations->currentPage() - 1) * $educations->perPage() + 1;
                                 @endphp
-
-                               
                                 @foreach ($educations as $education)
                                     <tr>
                                         <td>{{ $count }}</td>
                                         <td><input type="checkbox" class="selectCheckbox" name="selectedIds[]"
                                                 value="{{ $education->id }}"></td>
-                                        <td><x-action-button destroyRoute="{{ route('admins.destroy', $education->id) }}"
-                                                editRoute="{{ route('admins.edit', $education->id) }}" id="$education->id"
-                                                entityType="'admin'">
-                                            </x-action-button></td>
                                         <td>
-                                             {{-- @if ($education->status === 'Active')
-                                              <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($education->status === 'Inactive')
-                                               <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif --}}
-                                            <x-status-component :status="$education->status"/>{{ $education->education }}
-                                        
-                                        
+                                            <div class="d-flex flex-row">
+                                                <x-edit-action-button-component :editRoute="route('educations.edit', $education->id)" :id="$education->id" />
+                                                <x-destroy-action-button-component :destroyRoute="route('educations.destroy', $education->id)" :id="$education->id" />
+                                            </div>
                                         </td>
-                                        {{-- <td>@if ($education->status === 'Active')
-                                              <i class="mdi mdi-record" style="color: green"></i>
-                                            @elseif ($education->status === 'Inactive')
-                                               <i class="mdi mdi-record" style="color:red"></i>
-                                            @endif</td>
-                                        <td> --}}
-                                            
+                                        <td>
+                                            <x-status-component :status="$education->status" />{{ $education->education }}
+
+
+                                        </td>
                                     </tr>
-                                     @php
+                                    @php
                                         $count++;
                                     @endphp
                                 @endforeach
                             </tbody>
                         </table>
-                         <div class="d-flex justify-content-center">
+                        <div class="d-flex justify-content-center">
                             <span>{{ $educations->links() }}</span>
 
                         </div>
@@ -112,7 +84,7 @@
         </div>
     </div>
 @endsection
-{{-- @section('scripts')
+@section('scripts')
     <script src="{{ asset('assets/auth/plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js') }}"></script>
     <script>
         $(document).ready(function() {
@@ -121,4 +93,4 @@
         });
     </script>
 
-@endsection --}}
+@endsection

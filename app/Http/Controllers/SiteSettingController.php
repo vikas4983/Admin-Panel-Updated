@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSiteSettingRequest;
 use App\Http\Requests\UpdateSiteSettingRequest;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
 
 class SiteSettingController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -22,6 +24,11 @@ class SiteSettingController extends Controller
         //     $inActive = Menu::where('status', 0)->count();
         //     // All Count
         //     $countAll = Menu::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(SiteSetting::class, $urlName);
         return view('admin.siteSettings.index', compact('siteSettings'));
     }
 

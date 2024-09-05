@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Services\EmailService;
 use App\Services\AdminEmailService;
+use App\Traits\ModelCountsTrait;
 
 class AdminController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -36,7 +38,7 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
-        //dd('stop');
+        
 
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -53,9 +55,7 @@ class AdminController extends Controller
         }
 
         return redirect('admin-login')->with('error', 'The email and password do not match.');
-        // return back()->withErrors([
-        //     'email' => 'The provided credentials do not match our records.',
-        // ])->withInput($request->only('email', 'remember'));
+       
     }
 
     public function create()
@@ -67,7 +67,13 @@ class AdminController extends Controller
     {
         $admins = Admin::all();
         if ($admins) {
-            return view('admin.admins.index', compact('admins'));
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(Admin::class, $urlName);
+       // dd($urlName);
+        return view('admin.admins.index', compact('admins'));
         } else {
             return redirect()->back()->with('erroe', "Something went wrong!");
         }

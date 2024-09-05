@@ -18,9 +18,7 @@ use Illuminate\Queue\SerializesModels;
 class email extends Mailable
 {
     use Queueable, SerializesModels;
-
     public $admin;
-    //public $type;
     public $emailTemplate;
 
     /**
@@ -30,7 +28,6 @@ class email extends Mailable
     {
         $this->admin = $admin;
         $this->emailTemplate = $emailTemplate;
-      
     }
 
     /**
@@ -42,55 +39,45 @@ class email extends Mailable
     //         subject: 'Email',
     //     );
     // }
-    
+
     /**
      * Get the message content definition.
      */
     public function build()
-{
-    $otp = $this->admin->otps->first()->otp;
-    $footers = Menu::where('status', 1)->where('section', 0)->get();
-    $logos = Logo::where('status',1)->get();
+    {
+        $otp = $this->admin->otps->first()->otp;
+        $footers = Menu::where('status', 1)->where('section', 0)->get();
+        $logos = Logo::where('status', 1)->get();
 
-    // Replace placeholders in the subject and body with actual values
-    $subject = str_replace(
-        ['{{ name }}', '{{ otp }}'], 
-        [$this->admin->name, $otp], 
-        $this->emailTemplate->subject
-    );
+        // Replace placeholders in the subject and body with actual values
+        $subject = str_replace(
+            ['{{ name }}', '{{ otp }}'],
+            [$this->admin->name, $otp],
+            $this->emailTemplate->subject
+        );
 
-    $body = str_replace(
-        ['{{ name }}', '{{ otp }}'], 
-        [$this->admin->name, $otp], 
-        $this->emailTemplate->body
-    );
-    
-    
-    
+        $body = str_replace(
+            ['{{ name }}', '{{ otp }}'],
+            [$this->admin->name, $otp],
+            $this->emailTemplate->body
+        );
+        // $footerContent = '<ul>';
+        // foreach ($footers as $footer) {
+        //     $footerContent .= '<li><a href="' . $footer->url . '">' . $footer->name . '</a></li>';
+        // }
+        // $footerContent .= '</ul>';
+        // $body .= $footerContent;
 
-
-    // Add footers with URLs to the body
-   
-    $footerContent = '<ul>';
-    foreach ($footers as $footer) {
-        $footerContent .= '<li><a href="' . $footer->url . '">' . $footer->name . '</a></li>';
+        // Render the body with Blade
+        $renderedBody = \Blade::render($body, [
+            'admin' => $this->admin,
+            'otp' => $otp,
+            'footers' => $footers,
+            'logos' => $logos
+        ]);
+        return $this->subject($subject)
+            ->html($renderedBody);
     }
-    $footerContent .= '</ul>';
-
-    // Append the footer content to the email body
-    $body .= $footerContent;
-
-    // Render the body with Blade
-    $renderedBody = \Blade::render($body, [
-        'admin' => $this->admin, 
-        'otp' => $otp, 
-        'footers' => $footers, // Pass the $footers variable here
-        'logos' => $logos // Pass the $footers variable here
-    ]);
-
-    return $this->subject($subject)
-                ->html($renderedBody);
-}
 
     /**
      * Get the attachments for the message.

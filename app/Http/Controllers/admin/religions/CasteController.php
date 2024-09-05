@@ -8,9 +8,13 @@ use App\Http\Requests\admin\religions\UpdateCasteRequest;
 use App\Models\Caste;
 use App\Models\Religion;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class CasteController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -24,6 +28,12 @@ class CasteController extends Controller
         $inActive = Caste::where('status', 0)->count();
         // All Count
         $countAll = Caste::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(Caste::class, $urlName);
         return view('admin.religions.castes.index', compact('castes','count', 'active', 'inActive', 'countAll'));
     }
 

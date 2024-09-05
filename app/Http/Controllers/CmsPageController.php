@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateCmsPageRequest;
 use App\Models\cmsPage;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class CmsPageController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +25,12 @@ class CmsPageController extends Controller
         $inActive = cmsPage::where('status', 0)->count();
         // All Count
         $countAll = cmsPage::count();
-
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(cmsPage::class, $urlName);
         return view('admin.cmspages.index', compact('cmspages', 'active', 'inActive', 'countAll'));
     }
 

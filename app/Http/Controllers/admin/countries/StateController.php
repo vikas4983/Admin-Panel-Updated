@@ -8,9 +8,11 @@ use App\Http\Requests\admin\countries\UpdateStateRequest;
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
 
 class StateController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
@@ -25,6 +27,13 @@ class StateController extends Controller
         $inActive = State::where('status', 0)->count();
         // All Count
         $countAll = State::count();
+        
+        $this->indexCount(State::class, 'states.index');
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(State::class, $urlName);
         return view('admin.countries.states.index', compact('states','count', 'active', 'inActive', 'countAll'));
     }
 

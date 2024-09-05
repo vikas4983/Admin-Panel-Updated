@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\employees\CreateEmployeeRequest;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class EmployeeController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -22,6 +26,11 @@ class EmployeeController extends Controller
         $inActive = Employee::where('status', 0)->count();
         // All Count
         $countAll = Employee::count();
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(Employee::class, $urlName);
         return view('admin.employees.index', compact('employees','count', 'active', 'inActive', 'countAll'));
     }
 

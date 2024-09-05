@@ -19,8 +19,8 @@
 
 
         <!-- ====================================
-                                                                                                                                                        ——— WRAPPER
-                                                                                                                                                        ===================================== -->
+                                                                                                                                                                    ——— WRAPPER
+                                                                                                                                                                    ===================================== -->
         <div class="wrapper">
             <div class="content-wrapper">
                 <div class="content"><!-- For Components documentaion -->
@@ -141,19 +141,18 @@
                                             </div>
                                             <div class="btn-group d-flex flex-row justify-content-between " role="group"
                                                 aria-label="Basic example" style="width: 50px">
-                                                <button type="button" data-toggle="modal"
-                                                    data-target="#exampleModal{{ $admin->id }}">
-                                                    <i class="fas fa-edit mr-3 mb-3 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle"
-                                                        style="color"></i>
-                                                </button>
-                                                <form action="{{ route('admins.destroy', $admin->id) }}" method="post">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="mr-1 mb-3 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle ">
-                                                        <i class="fas fa-trash" style="color:red"></i>
+                                                <div class="d-flex flex-row">
+                                                    <button type="button" data-toggle="modal"
+                                                        data-target="#exampleModal{{ $admin->id }}"
+                                                        class="mr-3 btn-sm btn btn-icon btn-outline facebook btn-rounded-circle">
+                                                        <i class="fas fa-edit"></i>
                                                     </button>
-                                                </form>
+                                                    <x-destroy-action-button-component :destroyRoute="route('admins.destroy', $admin->id)"
+                                                        :id="$admin->id" />
+                                                </div>
+
+
+
                                             </div>
                                             <div class="modal fade" id="exampleModal{{ $admin->id }}" tabindex="-1"
                                                 role="dialog" aria-labelledby="exampleModalLabel{{ $admin->id }}"
@@ -566,7 +565,7 @@
 
 
 
-        
+
 
 
 

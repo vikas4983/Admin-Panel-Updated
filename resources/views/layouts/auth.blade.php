@@ -22,6 +22,8 @@
     <link href="{{ asset('assets/auth/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="{{ asset('assets/auth/plugins/toaster/toastr.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css">
+
     <!-- MONO CSS -->
     <link id="main-css-href" rel="stylesheet" href="{{ asset('assets/auth/css/style.css') }}" />
     <!-- COUNT CSS -->
@@ -123,21 +125,11 @@
         <div class="loader">
         </div>
     </div>
-
-
-
-
-
-
-    <!-- ====================================
-    ——— WRAPPER
-    ===================================== -->
+    <!--  WRAPPER
+     -->
     <div class="wrapper">
-
-
-        <!-- ====================================
-          ——— LEFT SIDEBAR WITH OUT FOOTER
-        ===================================== -->
+        <!-- LEFT SIDEBAR WITH OUT FOOTER
+         -->
         <aside class="left-sidebar sidebar-dark" id="left-sidebar">
             <div id="sidebar" class="sidebar sidebar-with-footer">
                 <!-- Aplication Brand -->
@@ -165,1226 +157,75 @@
                                 <span class="nav-text">Admin Dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a class="sidenav-item-link" href="{{ route('admins.index') }}">
+                        @foreach ($adminMenus as $adminMenu)
+                            <li class="has-sub">
+                                <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                                    data-target="#{{ $adminMenu->name ?? '' }}" aria-expanded="false"
+                                    aria-controls="{{ $adminMenu->name ?? '' }}">
+                                    <i class="{{ $adminMenu->icon }}" style="color: rgb(158,109,226)"></i>
+                                    <span class="nav-text">{{ $adminMenu->name }} 
+                                        @if($adminMenu->count == 0)
+                                        @else
+                                        <span class="badge badge-primary badge-pill">{{ $adminMenu->count ?? '' }}</span>
+                                        @endif
+                                       
+                                    </span>
+                                    <b class="caret"></b>
+                                </a>
+                                @if ($adminMenu->childrenRecursive->isNotEmpty())
+                                    <ul class="collapse" id="{{ $adminMenu->name ?? '' }}" data-parent="#sidebar-menu">
+                                        <div class="sub-menu">
+                                            @foreach ($adminMenu->childrenRecursive as $sub)
+                                                @if ($sub->childrenRecursive->isEmpty())
+                                                    <li>
+                                                    <li>
+                                                        <a href="{{ url('/admin' . $sub->url ?? '') }}"
+                                                            style="text-decoration: none;">
+                                                            <i class="{{ $sub->icon ?? '' }}"
+                                                                style="color: #38d3db;"></i> {{ $sub->name ?? '' }}
+                                                                @if($sub->count == 0)
+                                                                @else
+                                                                <span class="badge badge-primary badge-pill">{{ $sub->count ?? '' }}</span>
+                                                                @endif </a>
+
+
+                                                    </li>
+                            </li>
+                        @else
+                            <li class="has-sub">
+                                <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                                    data-target="#sub-{{ $sub->name ?? '' }}" aria-expanded="false"
+                                    aria-controls="sub-{{ $sub->name ?? '' }}">
+                                    <span class="nav-text"> <i class="{{ $sub->icon ?? '' }}"
+                                            style="color: #38d3db;"></i> {{ $sub->name ?? '' }}
+                                            @if($sub->count == 0)
+                                            @else
+                                            <span class="badge badge-primary badge-pill">{{ $sub->count ?? '' }}</span>
+                                            @endif
+                                    </span>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="collapse" id="sub-{{ $sub->name ?? '' }}">
+                                    <div class="sub-menu">
+                                        @foreach ($sub->childrenRecursive as $child)
+                                            <li>
+                                                <a href="{{ url('/admin' . $child->url) }}">
+
+                                                    {{ $child->name ?? '' }} </a>
 
-                                <i class="mdi mdi-briefcase-account-outline" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Admins<span
-                                        class="badge badge-primary badge-pill">{{ $counts['adminsCount'] ?? '' }}</span></span>
-                            </a>
-                        </li>
-                        {{-- <li class="section-title">
-                            Action
-                        </li> --}}
- <li class="section-title">
-                            Action
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#users" aria-expanded="false" aria-controls="users">
-                                <i class="mdi mdi-account-group-outline" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Users</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="users" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{ route('users.index') }}">
-                                            <span class="nav-text">All Users <span
-                                                    class="badge badge-primary badge-pill">{{ $counts['usersCount'] ?? '' }}</span></span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link"
-                                            href="{{ route('users.index', ['activeUsers' => 'Users']) }}">
-                                            <span class="nav-text">Active Users
-                                                <span
-                                                    class="badge badge-primary badge-pill">{{ $counts['activeUsersCount'] ?? '' }}</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link"
-                                            href="{{ route('users.index', ['inActiveUsers' => 'Users']) }}">
-                                            <span class="nav-text">InActive USers
-                                                <span
-                                                    class="badge badge-primary badge-pill">{{ $counts['inActiveUsersCount'] ?? '' }}</span>
-                                            </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{ route('users.index',['paidUsers' => 'users'])}}">
-                                            <span class="nav-text">Paid Users
-                                            <span class="badge badge-primary badge-pill">{{ $counts['paidUsersCount'] ?? '' }}</span>
-</span>
-                                        </a>
-                                    </li>
-                                   
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{route('spotelights.index')}}">
-                                            <span class="nav-text">Spotlight Users
-                                                <span class="badge badge-primary badge-pill">{{ $counts['spotlightCount'] ?? '' }}</span>
-                                            </span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{url('admin/user-orders')}}">
-                                            <span class="nav-text">User Orders</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-notify-settings.html">
-                                            <span class="nav-text">User Notify Settings</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#ui-geographys" aria-expanded="false" aria-controls="ui-geographys">
-                                <i class="mdi mdi-earth" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Geography</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="ui-geographys" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#tables" aria-expanded="false" aria-controls="tables">
-                                            <span class="nav-text">Countries<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['countriesCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="tables">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('countries.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('countries.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#icons" aria-expanded="false" aria-controls="icons">
-                                            <span class="nav-text">State<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['statesCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="icons">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('states.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('states.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#widgets" aria-expanded="false" aria-controls="widgets">
-                                            <span class="nav-text">Cities<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['citiesCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="widgets">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('cities.index') }}">List</a>
-
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('cities.create') }}">Create</a>
-
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#ui-religions" aria-expanded="false" aria-controls="ui-religions">
-                                <i class="mdi mdi-hinduism" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Community</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="ui-religions" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#religions" aria-expanded="false" aria-controls="religions">
-                                            <span class="nav-text">Religion<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['religionsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="religions">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('religions.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('religions.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#castes" aria-expanded="false" aria-controls="castes">
-                                            <span class="nav-text">Caste<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['castesCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="castes">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('castes.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('castes.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-
-
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#Employees" aria-expanded="false" aria-controls="Employees">
-                                <i class="mdi mdi-account-group" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Employee <span
-                                        class="badge badge-primary badge-pill">{{ $counts['employeesCount'] ?? '' }}</span></span> <b
-                                    class="caret"></b>
-                            </a>
-                        <li class="has-sub">
-                            <ul class="collapse" id="Employees">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('employees.index') }}">List</a>
-
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('employees.create') }}"> Create</a>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#Educations" aria-expanded="false" aria-controls="Educations">
-
-                                <i class="mdi mdi-book" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Education <span
-                                        class="badge badge-primary badge-pill">{{ $counts['educationsCount'] ?? '' }}</span></span> <b
-                                    class="caret"></b>
-                            </a>
-                        <li class="has-sub">
-                            <ul class="collapse" id="Educations">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('educations.index') }}">List</a>
-
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('educations.create') }}">Create</a>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#Occupations" aria-expanded="false" aria-controls="Occupations">
-                                <i class="mdi mdi-briefcase" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Occupation<span
-                                        class="badge badge-primary badge-pill">{{ $counts['occupationsCount'] ?? '' }}</span> </span> <b
-                                    class="caret"></b>
-                            </a>
-
-                        <li class="has-sub">
-
-                            <ul class="collapse" id="Occupations">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('occupations.index') }}">List</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('occupations.create') }}">Create</a>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#Incomes" aria-expanded="false" aria-controls="Incomes">
-                                <i class="mdi mdi-currency-inr" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Income<span
-                                        class="badge badge-primary badge-pill">{{ $counts['incomesCount'] ?? '' }}</span> </span> <b
-                                    class="caret"></b>
-                            </a>
-
-
-                        <li class="has-sub">
-                            <ul class="collapse" id="Incomes">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('incomes.index') }}">List</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('incomes.create') }}">Create</a>
-
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#Plans" aria-expanded="false" aria-controls="Plans">
-                                <i class="mdi mdi-chess-queen" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Plan <span
-                                        class="badge badge-primary badge-pill">{{ $counts['plansCount'] ?? '' }}</span></span> <b
-                                    class="caret"></b>
-                            </a>
-
-
-                        <li class="has-sub">
-                            <ul class="collapse" id="Plans">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('plans.index') }}">List</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('plans.create') }}">Create</a>
-
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#successStories" aria-expanded="false" aria-controls="successStories">
-                                <i class="mdi mdi-chess-queen" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Success Story <span
-                                        class="badge badge-primary badge-pill">{{ $counts['successStoriesCount'] ?? '' }}</span></span>
-                                <b class="caret"></b>
-                            </a>
-
-
-                        <li class="has-sub">
-                            <ul class="collapse" id="successStories">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a href="{{ route('successStories.index') }}">List</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('successStories.create') }}">Create</a>
-
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        </li>
-                        <li class="section-title">
-                            Action
-                        </li>
-                        <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#ui-siteSettings" aria-expanded="false" aria-controls="ui-siteSettings">
-                                <i class="mdi mdi-cellphone-settings-variant" style="color: rgb(158,109,226)"></i>
-                                <span class="nav-text">Site Settings</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="ui-siteSettings" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#approvals" aria-expanded="false" aria-controls="approvals">
-                                            <span class="nav-text">Approval<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['approvalsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="approvals">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('approvals.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('approvals.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#banners" aria-expanded="false" aria-controls="banners">
-                                            <span class="nav-text">Banner<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['bannersCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="banners">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('banners.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('banners.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#cmsPages" aria-expanded="false" aria-controls="cmsPages">
-                                            <span class="nav-text">CMS Pages<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['cmsPagesCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="cmsPages">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('cmsPages.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('cmsPages.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#emailSettings" aria-expanded="false"
-                                            aria-controls="emailSettings">
-                                            <span class="nav-text">Email Setting<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['emailSettingsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="emailSettings">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('emailSettings.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('emailSettings.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#favicons" aria-expanded="false" aria-controls="favicons">
-                                            <span class="nav-text">Favicon<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['faviconsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="favicons">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('favicons.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('favicons.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#logos" aria-expanded="false" aria-controls="logos">
-                                            <span class="nav-text">Logo<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['logosCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="logos">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('logos.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('logos.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#menus" aria-expanded="false" aria-controls="menus">
-                                            <span class="nav-text">Menu<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['menusCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="menus">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('menus.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('menus.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#profileids" aria-expanded="false"
-                                            aria-controls="profileids">
-                                            <span class="nav-text">Profile Id<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['profileidsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="profileids">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('profileids.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('profileids.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#siteConfigs" aria-expanded="false"
-                                            aria-controls="siteConfigs">
-                                            <span class="nav-text">Site Config<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['siteConfigsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="siteConfigs">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('siteConfigs.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('siteConfigs.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#siteSettings" aria-expanded="false"
-                                            aria-controls="siteSettings">
-                                            <span class="nav-text">Site Setting<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['siteSettingsCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="siteSettings">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('siteSettings.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('siteSettings.create') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#paymentgateways" aria-expanded="false"
-                                            aria-controls="paymentgateways">
-                                            <span class="nav-text">Payment Gateways<span
-                                                    class="badge badge-primary badge-pill">{{ $counts['paymentgatewaysCount'] ?? '' }}</span></span>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="paymentgateways">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="{{ route('paymentgateways.index') }}">List</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('paymentgateways.index') }}">Create</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                            data-target="#widgets" aria-expanded="false" aria-controls="icons">
-                            {{-- <li class="has-sub">
-
-                                <i class="mdi mdi-map"></i>
-                                <div class="nav-text">Countries</div>
-
-                                <b class="caret"></b>
-                            </a>
-
-                            
-                                                                </li>
-
-                                        
-                                                                                <ul class="collapse" id="widgets">
-                            <div class="sub-menu">
-
-                                <li>
-                                    <a href="{{ route('countries.index') }}">View Countries</a>
-                                        </li>             
-                                             <li>
                                             </li>
-                                                                                     <a href="{{ route('countries.create') }}">Create Countries</a>
-                                     <li>
-                                    </li>
-                                                                             <a href="{{ route('states.index') }}">View States</a>
-                                     <li>
-                                    </li>
-                                                                             <a href="{{ route('states.create') }}">Create State</a>
-                                     <li>
-                                    </li>
-                                                                             <a href="{{ route('cities.index') }}">View City</a>
-                                     <li>
-                            <a href="{{ route('cities.create') }}">Create City</a>
-                                     </li>
-                               </div>
-                               </ul>
-                               </li> --}}
-
-
-                            {{-- <li class="has-sub">
-                                                              <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse" data-target="#email" aria-expanded="false" aria-controls="email">
-                        <i class="mdi mdi-email"></i>
-                        <span class="nav-text">Religion</span> <b class="caret"></b>
-                                                              </a>
-                                                              <ul class="collapse" id="email" data-parent="#sidebar-menu">
-                        <div class="sub-menu">
-                            <li>
-                                <a class="sidenav-item-link" href="{{ route('religions.index') }}">
-                               <span class="nav-text">View Relogins</span>
-
-                               </a>
-                               </li>
-                               <li>
-                                                              <a class="sidenav-item-link" href="{{ route('religions.create') }}">
-                        <span class="nav-text">Create Religion</span>
-
-                                                              </a>
-                               </li>
-                               <li>
-                                                              <a class="sidenav-item-link" href="{{ route('castes.index') }}">
-                        <span class="nav-text">View Castes</span>
-
-                                                              </a>
-                               </li>
-                               <li>
-                                                              <a class="sidenav-item-link" href="{{ route('castes.create') }}">
-                        <span class="nav-text">Create Caste</span>
-
-                                                              </a>
-                               </li>
-                                                                      </div>
-                                                                      </ul>
-                                                                     </li> --}}
-
-                            {{-- <li class="section-title">
-                            UI Elements
-                                                                 </li> --}}
-                            {{--  <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#ui-elements" aria-expanded="false" aria-controls="ui-elements">
-                                <i class="mdi mdi-folder-outline"></i>
-                                <span class="nav-text">UI Components</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="ui-elements" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-
-
-
-                                     <li>
-                                        <a class="sidenav-item-link" href="{{ route('employees.index') }}">
-                                            <span class="nav-text">Employees Type</span>
-
-                                        </a>
-
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{ route('educations.index') }}">
-                                            <span class="nav-text">Educations</span>
-
-                                        </a>
-
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="{{ route('occupations.index') }}">
-                                            <span class="nav-text">Occupations</span>
-
-                                        </a>
-                                    </li> --}}
-
-                            {{-- <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#buttons" aria-expanded="false" aria-controls="buttons">
-                                            <span class="nav-text">Buttons</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="buttons">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="button-default.html">Button Default</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="button-dropdown.html">Button Dropdown</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="button-group.html">Button Group</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="button-social.html">Button Social</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="button-loading.html">Button Loading</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li> --}}
-
-
-
-
-
-                            {{-- <li>
-                                        <a class="sidenav-item-link" href="{{ route('incomes.index') }}">
-                                            <span class="nav-text">Income</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="carousel.html">
-                                            <span class="nav-text">Carousel</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="collapse.html">
-                                            <span class="nav-text">Collapse</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="editor.html">
-                                            <span class="nav-text">Editor</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="list-group.html">
-                                            <span class="nav-text">List Group</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="modal.html">
-                                            <span class="nav-text">Modal</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="pagination.html">
-                                            <span class="nav-text">Pagination</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="popover-tooltip.html">
-                                            <span class="nav-text">Popover & Tooltip</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="progress-bar.html">
-                                            <span class="nav-text">Progress Bar</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="spinner.html">
-                                            <span class="nav-text">Spinner</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="switches.html">
-                                            <span class="nav-text">Switches</span>
-
-                                        </a>
-                                    </li> --}}
-
-
-
-
-
-                            {{-- <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#tables" aria-expanded="false" aria-controls="tables">
-                                            <span class="nav-text">Tables</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="tables">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="bootstarp-tables.html">Bootstrap Tables</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="data-tables.html">Data Tables</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="tab.html">
-                                            <span class="nav-text">Tab</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="toaster.html">
-                                            <span class="nav-text">Toaster</span>
-
-                                        </a>
-                                    </li>
-
-
-
-
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#icons" aria-expanded="false" aria-controls="icons">
-                                            <span class="nav-text">Icons</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="icons">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="material-icons.html">Material Icon</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="flag-icons.html">Flag Icon</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-
-
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#forms" aria-expanded="false" aria-controls="forms">
-                                            <span class="nav-text">Forms</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="forms">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="basic-input.html">Basic Input</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="input-group.html">Input Group</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="checkbox-radio.html">Checkbox & Radio</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="form-validation.html">Form Validation</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="form-advance.html">Form Advance</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-
-
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#maps" aria-expanded="false" aria-controls="maps">
-                                            <span class="nav-text">Maps</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="maps">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="google-maps.html">Google Map</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="vector-maps.html">Vector Map</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-
-
-
-                                    <li class="has-sub">
-                                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                            data-target="#widgets" aria-expanded="false" aria-controls="widgets">
-                                            <span class="nav-text">Widgets</span> <b class="caret"></b>
-                                        </a>
-                                        <ul class="collapse" id="widgets">
-                                            <div class="sub-menu">
-
-                                                <li>
-                                                    <a href="widgets-general.html">General Widget</a>
-                                                </li>
-
-                                                <li>
-                                                    <a href="widgets-chart.html">Chart Widget</a>
-                                                </li>
-
-                                            </div>
-                                        </ul>
-                                    </li>
-
-
-
-                                </div>
-                            </ul>
-                        </li>
-                                                             <li class="has-sub">
-                                                                       <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#charts" aria-expanded="false" aria-controls="charts">
-                                <i class="mdi mdi-chart-pie"></i>
-                                <span class="nav-text">Charts</span> <b class="caret"></b>
-                            </a>
-                                                                    <ul class="collapse" id="charts" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-
-
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="apex-charts.html">
-                                            <span class="nav-text">Apex Charts</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                                                                    </ul>
-                                                                  </li>
-                             <li class="section-title">
-                            Pages
-                           </li>
-                                                                  <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#users" aria-expanded="false" aria-controls="users">
-                                <i class="mdi mdi-image-filter-none"></i>
-                                <span class="nav-text">User</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="users" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-profile.html">
-                                            <span class="nav-text">User Profile</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-activities.html">
-                                            <span class="nav-text">User Activities</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-profile-settings.html">
-                                            <span class="nav-text">User Profile Settings</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-account-settings.html">
-                                            <span class="nav-text">User Account Settings</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-planing-settings.html">
-                                            <span class="nav-text">User Planing Settings</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-billing.html">
-                                            <span class="nav-text">User billing</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="user-notify-settings.html">
-                                            <span class="nav-text">User Notify Settings</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                            </ul>
-                                                                  </li>
-                                                                  <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#authentication" aria-expanded="false" aria-controls="authentication">
-                                <i class="mdi mdi-account"></i>
-                                <span class="nav-text">Authentication</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="authentication" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a class="sidenav-item-link" href="sign-in.html">
-                                            <span class="nav-text">Sign In</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="sign-up.html">
-                                            <span class="nav-text">Sign Up</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="reset-password.html">
-                                            <span class="nav-text">Reset Password</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                            </ul>
-                                                                  </li>
-                                                                  <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#other-page" aria-expanded="false" aria-controls="other-page">
-                                <i class="mdi mdi-file-multiple"></i>
-                                <span class="nav-text">Other pages</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="other-page" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a class="sidenav-item-link" href="invoice.html">
-                                            <span class="nav-text">Invoice</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="404.html">
-                                            <span class="nav-text">404 page</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="page-comingsoon.html">
-                                            <span class="nav-text">Coming Soon</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="page-maintenance.html">
-                                            <span class="nav-text">Maintenance</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                            </ul>
-                                                                  </li>
-                                                                  <li class="section-title">
-                            Documentation
-                                                                  </li>
-                                                                  <li>
-                            <a class="sidenav-item-link" href="getting-started.html">
-                                <i class="mdi mdi-airplane"></i>
-                                <span class="nav-text">Getting Started</span>
-                            </a>
-                                                                  </li>
-                                                                  <li class="has-sub">
-                            <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
-                                data-target="#customization" aria-expanded="false" aria-controls="customization">
-                                <i class="mdi mdi-square-edit-outline"></i>
-                                <span class="nav-text">Customization</span> <b class="caret"></b>
-                            </a>
-                            <ul class="collapse" id="customization" data-parent="#sidebar-menu">
-                                <div class="sub-menu">
-                                    <li>
-                                        <a class="sidenav-item-link" href="navbar-customization.html">
-                                            <span class="nav-text">Navbar</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="sidebar-customization.html">
-                                            <span class="nav-text">Sidebar</span>
-
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="sidenav-item-link" href="styling.html">
-                                            <span class="nav-text">Styling</span>
-
-                                        </a>
-                                    </li>
-                                </div>
-                            </ul>
-                                                                  </li>
-                                                             </ul>
-                                                             </div> 
-                      <div class="sidebar-footer">
-                    <div class="sidebar-footer-content">
-                        <ul class="d-flex">
-                            <li>
-                                <a href="user-account-settings.html" data-toggle="tooltip"
-                                    title="Profile settings"><i class="mdi mdi-settings"></i></a>
+                                        @endforeach
+                                    </div>
+                                </ul>
                             </li>
-                            <li>
-                                <a href="#" data-toggle="tooltip" title="No chat messages"><i
-                                        class="mdi mdi-chat-processing"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                    </div>
-                   --}}
+                        @endif
+                        @endforeach
                 </div>
+                </ul>
+                @endif
+                </li>
+                @endforeach
+            </div>
         </aside>
 
 
@@ -1779,26 +620,6 @@
                                             </div>
                                     @endif
                             </li>
-                            {{-- <li>
-                                        <a class="dropdown-link-item" href="email-inbox.html">
-                                            <i class="mdi mdi-email-outline"></i>
-                                            <span class="nav-text">Message</span>
-                                            <span class="badge badge-pill badge-primary">24</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-link-item" href="user-activities.html">
-                                            <i class="mdi mdi-diamond-stone"></i>
-                                            <span class="nav-text">Activitise</span></a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-link-item" href="user-activities.html">
-                                            <i class="mdi mdi-diamond-stone"></i>
-                                            <span class="nav-text">Activitise</span></a>
-                                    </li>
- --}}
-
-
                         </ul>
                         </li>
 
@@ -1808,7 +629,7 @@
                                     $admin = Auth::guard('admin')->user();
 
                                 @endphp
-                                @if ($admin->image)
+                                @if ($admin->image ?? '')
                                     <img src="{{ asset('storage/admin/admin-images/' . $admin->image ?? '') }}"
                                         class="user-image rounded-circle" alt="image"
                                         style="width: 50px; height: 50px; overflow: hidden; border-radius: 50%;" />
@@ -1871,16 +692,10 @@
 
             </header>
 
-            <!-- ====================================
-        ——— CONTENT WRAPPER
-        ===================================== -->
-
-
+            <!-- CONTENT WRAPPER -->
             @yield('styles')
             @yield('content')
             @yield('widgets')
-
-
             <!-- Footer -->
             <footer class="footer mt-auto">
                 <div class="copyright bg-white">
@@ -1926,12 +741,6 @@
         <link rel="stylesheet" type="text/css"
             href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-
-
-
-
-
-
         <script>
             jQuery(document).ready(function() {
                 jQuery('input[name="dateRange"]').daterangepicker({
@@ -1960,18 +769,11 @@
                 });
             });
         </script>
-        {{-- Razorpay  --}}
-
-
-
-
-
         @yield('scripts')
-        <!--  -->
+
 </body>
 
 <script>
-    // JavaScript code to hide the loader after 2 seconds
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             var loader = document.getElementById('loader');

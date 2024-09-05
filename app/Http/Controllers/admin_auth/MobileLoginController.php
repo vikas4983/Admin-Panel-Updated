@@ -16,10 +16,13 @@ use App\Services\TwilioSmsService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use App\Jobs\SendEmailJob;
 
 class MobileLoginController extends Controller
 {
     protected $smsApiService;
+    protected $SendEmailJob;
+
     protected $phoneNumberService;
     protected $TwilioSmsService;
     protected $AdminEmailService;
@@ -65,10 +68,11 @@ class MobileLoginController extends Controller
                 'expires_at' => $currentDateTime
             ]);
 
+
             $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
+            SendEmailJob::dispatch($admin, $emailTemplate);
             $this->smsApiService->OTP($admin); // BulkSmsPlansApi
             $this->AdminEmailService->configureMailer($admin, $emailTemplate);
-
             //$this->TwilioSmsService->OTP($admin); // Twilio Api
 
             return view('verify_otp', [
@@ -85,14 +89,14 @@ class MobileLoginController extends Controller
 
     public function resendOTP(Request $request)
     {
-       $validateRequest = $request->validate([
+        $validateRequest = $request->validate([
             'mobile' => ['required', 'digits:10'],
             'ResendOTP' => ['required', 'string'],
-           
+
         ]);
         $mobile = $validateRequest['mobile'];
         $name = $validateRequest['ResendOTP'];
-       
+
         try {
 
             $admin = Admin::where('mobile', $mobile)->first();
@@ -109,7 +113,7 @@ class MobileLoginController extends Controller
                 'expires_at' => $currentDateTime
             ]);
             $emailTemplate = EmailTemplate::where('status', 1)->where('name', $name)->first();
-           
+
             $this->smsApiService->OTP($admin); // Using BulkSmsPlans API
             $this->AdminEmailService->configureMailer($admin, $emailTemplate);
             //$this->TwilioSmsService->resendOTP($admin); // Using Twilio API
@@ -178,7 +182,7 @@ class MobileLoginController extends Controller
             'mobile' => $request->mobile,
             'expires_at' => $currentDateTime
         ]);
-        
+
         $this->smsApiService->OTP($admin);
         $this->AdminEmailService->configureMailer($admin, $emailTemplate);
         // $this->TwilioSmsService->sendSms($admin); // Twilio Api
@@ -204,14 +208,13 @@ class MobileLoginController extends Controller
             $query->latest('id')->first();
         }])->first();
         if (!$mobileLogin) {
-
-            // return view('admin-forgot-password-form', [
-            //     'admin' => $admin,
-            //     'error' => 'Incorrect OTP or OTP expired'
-            // ]);
+            return view('admin-forgot-password-form', [
+                'admin' => $admin,
+                'error' => 'Incorrect OTP or OTP expired'
+            ]);
         }
-        //dd('vikas');
-        return view('change-password-form', compact('admin'))->with('success', 'Veified, Now you can change the password!');
+
+        return view('change-password-form', compact('admin'))->with('success', 'Veified, Now you can set new  password!');
     }
 
     public function changePassword(Request $request)
@@ -231,39 +234,35 @@ class MobileLoginController extends Controller
                 'mobile.digits' => 'The mobile number must be exactly 10 digits.',
             ]);
 
-            // Find the admin by mobile number
             $admin = Admin::where('mobile', $validatedData['mobile'])->first();
 
-            // Check if admin exists
+
             if (!$admin) {
                 return redirect()->route('admin-login')->with('error', 'Admin not found. Please try again.');
             }
 
-            // Update the admin's password
+
             $admin->update([
                 'password' => Hash::make($validatedData['password'])
             ]);
 
-            // Remove the latest OTP for this admin if it exists
+
             $latestOTP = MobileLogin::where('admin_id', $admin->id)->latest('id')->first();
             if ($latestOTP) {
                 $latestOTP->delete();
             }
 
-            // Clear any OTP-related session data
+
             session()->forget('latestOTP');
 
-            // Log the admin in
+
             Auth::guard('admin')->login($admin);
 
-            // Redirect to the dashboard
+
             return redirect('admin/dashboard')->with('success', 'Password changed successfully!');
         } catch (\Exception $e) {
-            // Log the exception message for debugging purposes
-            \Log::error('Password change failed: ' . $e->getMessage());
 
-            // Redirect back with an error message
-            return redirect('admin-login')->with('error', 'An error occurred while changing the password. Please try again.');
+            return redirect()->route('admin-login')->withErrors(['error' => 'An error occurred while changing the password. Please try again.']);
         }
     }
     public function showVerifyOtpForm(Request $request)

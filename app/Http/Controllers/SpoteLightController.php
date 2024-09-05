@@ -8,59 +8,28 @@ use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\ProfileTrait;
+use App\Traits\ModelCountsTrait;
 
 class SpoteLightController extends Controller
 {
     use ProfileTrait;
-   
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $spotelights = SpoteLight::with(['user'=> function ($query){
-         $query->where('status', 1);
-        }])
-        ->where('is_spote_light', 1)
-        
-        ->get();
-        // dd($paidUsers);
+        $spotelights = $this->spoteLightStatus();
+        $fullUrl = $request->fullUrl();
+        $segments = explode('/', $fullUrl);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
         $profilePrefixs = $this->profilePrefix();
-       
-
+        $count = $spotelights->count();
+        $this->spoteLightCount(SpoteLight::class, $urlName, $count);
         return view('admin.spotelights.index', compact('spotelights', 'profilePrefixs'));
     }
-
-
-
-
-
-// $paidUsers = SpoteLight::where('is_spote_light', 1)
-//         ->whereHas('user', function ($query) {
-//             $query->where('status', 1);
-//         })
-//         ->whereIn('id', function ($query) {
-//             $query->select(DB::raw('MAX(id)'))
-//             ->from('spote_lights')
-//             ->where('is_spote_light', 1)
-//             ->groupBy('user_id');
-//         })
-//         ->with('user')
-//         ->get();
-
-//         $profilePrefixs = $this->profilePrefix();
-
-//         return view('admin.spotelights.index', compact('paidUsers', 'profilePrefixs'));
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -75,10 +44,8 @@ class SpoteLightController extends Controller
      */
     public function store(Request $request)
     {
-
         $userId = $request->user_id;
         $spoteLightDate = $request->duration;
-
         if ($userId) {
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',
@@ -86,7 +53,6 @@ class SpoteLightController extends Controller
             ]);
             $validatedData['is_spote_light'] = 1;
             SpoteLight::create($validatedData);
-
             return redirect()->back()->with('success', "Spote Light Created Successfully");
         } else {
             return redirect()->back()->with('error', "User ID is required.");
@@ -116,31 +82,20 @@ class SpoteLightController extends Controller
     {
         $userId = $request->user_id;
         $spoteLightDuration = $request->duration;
-
         $previousSpoteLight = SpoteLight::latest('created_at')
-        ->where('user_id', $userId)
-        ->first(); 
-        //dd($previousSpoteLight);
-        
-        // Retrieve the latest SpoteLight for the user
-
+            ->where('user_id', $userId)
+            ->first();
         if ($previousSpoteLight) {
-             $previousSpoteLight->update([
-              'is_spote_light' => 0
-             ]);
-            // Convert 'duration' attribute to Carbon instance if needed
+            $previousSpoteLight->update([
+                'is_spote_light' => 0
+            ]);
             $previousDuration = Carbon::parse($previousSpoteLight->duration);
-
-            // Calculate new duration by adding days
             $newDuration = $previousDuration->copy()->addDays($spoteLightDuration);
-
-            // Update the SpoteLight with the new duration
             SpoteLight::create([
                 'user_id' => $userId,
                 'duration' => $newDuration->toDateTimeString(), // Store the updated duration
                 'is_spote_light' => 1,
             ]);
-
             return redirect()->back()->with('success', "Spote Light Updated Successfully!");
         }
     }
@@ -152,5 +107,27 @@ class SpoteLightController extends Controller
     public function destroy(SpoteLight $spoteLight)
     {
         //
+    }
+
+    public function spoteLightStatus()
+    {
+        $spoteLightStatus = SpoteLight::with('user')->get();
+        $currentDate = now();
+        foreach ($spoteLightStatus as $spoteLightStatu) {
+            if ($spoteLightStatu->duration >= $currentDate) {
+                $spoteLightStatu->update([
+                    'is_spote_light' => 1
+                ]);
+            } else {
+                $spoteLightStatu->update([
+                    'is_spote_light' => 0
+                ]);
+            }
+        }
+        $spotlights = SpoteLight::where('is_spote_light', 1)
+            ->latest('created_at')
+            ->get()
+            ->unique('id');
+        return $spotlights;
     }
 }

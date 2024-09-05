@@ -8,16 +8,20 @@ use App\Http\Requests\admin\countries\UpdateCountryRequest;
 use App\Models\Country;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
+use App\Traits\ModelCountsTrait;
+
 
 class CountryController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
-    { // countries view
-        $countries =
-        Country::orderByDesc('created_at')->paginate(10);
+    {
+        // countries view
+        $countries = Country::orderByDesc('created_at')->paginate(10);
         $count = ($countries->currentPage() - 1) * $countries->perPage();
         // Activbe Count
         $active = Country::where('status', 1)->count();
@@ -25,7 +29,12 @@ class CountryController extends Controller
         $inActive = Country::where('status', 0)->count();
         // All Count
         $countAll = Country::count();
-        return view('admin.countries.index', compact('countries','count', 'active', 'inActive', 'countAll'));
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        $this->indexCount(Country::class, $urlName);
+        return view('admin.countries.index', compact('countries', 'count', 'active', 'inActive', 'countAll'));
     }
 
     /**
@@ -33,6 +42,7 @@ class CountryController extends Controller
      */
     public function create()
     {
+        $this->createCount(Country::class, 'countries.create');
         return view('admin.countries.create');
     }
 
@@ -41,11 +51,12 @@ class CountryController extends Controller
      */
     public function store(CreateCountryRequest $request)
     {
-        dd($request->all());
+        //dd($request->all());
         Country::create([
             'country' => $request->country,
             'status' => $request->status
         ]);
+
         $msg = "Country Added Successfully";
 
         //return redirect('admin/countries')->with('success', $msg);
@@ -98,7 +109,7 @@ class CountryController extends Controller
 
     public function checkBoxDelete(Request $request)
     {
-       // dd($request->all());
+        // dd($request->all());
         $selectedInactiveCountryIds = $request->input('selectedInactiveCountryIds');
         if (!empty($selectedInactiveCountryIds)) {
             $ids = explode(',', $selectedInactiveCountryIds[0]);
@@ -119,10 +130,10 @@ class CountryController extends Controller
     }
 
     public function activeItem(Request $request)
-    { 
-        
+    {
+
         //dump('country');
-       // dd($request->all());
+        // dd($request->all());
         $selectedActiveCountryIds = $request->input('selectedActiveCountryIds');
         if (!empty($selectedActiveCountryIds)) {
             $ids = explode(',', $selectedActiveCountryIds[0]);
@@ -167,8 +178,4 @@ class CountryController extends Controller
             return redirect()->back()->with('error', 'No items selected.');
         }
     }
-
-
-
-
 }

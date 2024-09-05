@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -92,5 +94,36 @@ class User extends Authenticatable
     public function razorpays()
     {
         return $this->hasMany(RazorPay::class,'user_id');
+    }
+
+    public function getPaidUsersAttribute()
+    {
+        $payments = Payment::with('user.spotelights', 'plan')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $paidUsers = [];
+        $userIds = []; // To keep track of processed user IDs
+
+        foreach ($payments as $payment) {
+            $paidPaymentDate = Carbon::parse($payment->expiry_date);
+            $currentDate = Carbon::now('Asia/Kolkata');
+            // Check if the payment is still valid
+            if ($paidPaymentDate >= $currentDate) {
+                // Check if the user has already been added
+                if (!in_array($payment->user_id, $userIds)) {
+                    $paidUsers[] = $payment; // Add the payment (with user)
+                    $userIds[] = $payment->user_id; // Mark this user as processed
+                }
+            } else {
+                // Update expired payments
+                $payment->update([
+                    'contact' => null,
+                    'is_paid' => 0
+                ]);
+            }
+        }
+
+        return $paidUsers;
     }
 }

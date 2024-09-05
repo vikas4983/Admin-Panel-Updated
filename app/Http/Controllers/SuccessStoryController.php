@@ -9,16 +9,23 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use App\Traits\ModelCountsTrait;
 
 class SuccessStoryController extends Controller
 {
+    use ModelCountsTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $successStories = SuccessStory::orderByDesc('created_at')->paginate(10);
-
+        $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(SuccessStory::class, $urlName);
         return view('admin.successStories.index', compact('successStories'));
     }
 

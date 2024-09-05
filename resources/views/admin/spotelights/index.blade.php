@@ -18,12 +18,7 @@
                                 @php
                                     $payment = $spotelight->user->payments->last();
                                 @endphp
-                                <div class="col-lg-4 col-xl-4 col-xxl-4" {{-- @php
-$currentDate = \Carbon\Carbon::now();
-    $spotLight = $spotelight->user->spotelights->last(); @endphp
-                                    @if ($spotLight && $spotLight->is_spote_light == 'Active') style="background-color: #9E6DE2; border-radius: 10px;"
-    @else
-        style="background-color: transparent;" @endif --}}>
+                                <div class="col-lg-4 col-xl-4 col-xxl-4">
                                     <div class="card card-default mt-7">
                                         <div class="card-body"
                                             @php
@@ -392,10 +387,6 @@ $currentDate = \Carbon\Carbon::now();
                         @endif
 
                     </div>
-
-
-
-
                 </div>
             </div>
         </div>

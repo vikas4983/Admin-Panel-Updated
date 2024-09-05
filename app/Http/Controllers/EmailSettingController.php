@@ -7,9 +7,13 @@ use App\Http\Requests\UpdateEmailSettingRequest;
 use App\Models\EmailSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Traits\ModelCountsTrait;
+
 
 class EmailSettingController extends Controller
 {
+    use ModelCountsTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -22,6 +26,12 @@ class EmailSettingController extends Controller
     //     $inActive = Menu::where('status', 0)->count();
     //     // All Count
     //     $countAll = Menu::count();
+    $url = request()->path();
+        $segments = explode('/', $url);
+        $lastSegment = end($segments);
+        $urlName = '/' . $lastSegment;
+        
+        $this->indexCount(EmailSetting::class, $urlName);
         return view('admin.emailSettings.index', compact('emailSettings'));
     }
 
